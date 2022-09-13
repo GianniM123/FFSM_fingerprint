@@ -5,10 +5,8 @@ import warnings
 
 import networkx as nx
 
-from fsm import FSMDiff, SMT_SOLVERS
+from ffsm import FFSMDiff, SOLVERS
 from read_pairs import read_pairs
-import fsm
-import debug
 
 
 def main():
@@ -23,23 +21,23 @@ def main():
     updated_filename = None
     output_file = "out.dot"
     try:
-        arguments = getopt.getopt(sys.argv[1:],"idelphs:k:t:r:m:o:",["time","debug","equation","log","performance","help","k-pairs","smt","k_value","threshold","ratio","matching-file","ref=", "upd=", "out="])
+        arguments = getopt.getopt(sys.argv[1:],"idelphs:k:t:r:m:o:",["time","debug","equation","log","performance","help","k-pairs","solver","k_value","threshold","ratio","matching-file","ref=", "upd=", "out="])
 
         for current_arg, current_val in arguments[0]:
             if current_arg in ("-s", "--smt"):
-                if current_val in SMT_SOLVERS:
-                    fsm.current_solver = current_val
+                if current_val in SOLVERS:
+                    FFSMDiff().current_solver = current_val
                 else:
                     print("invalid smt-solver")
                     return
             elif current_arg in ("-d", "--debug"):
-                fsm.debug = True
+                FFSMDiff().debug = True
             elif current_arg in ("-i", "--time"):
-                fsm.timing = True
+                FFSMDiff().timing = True
             elif current_arg in ("-p", "--performance"):
-                fsm.performance = True
+                FFSMDiff().performance = True
             elif current_arg in ("-l", "--log"):
-                fsm.logging = True
+                FFSMDiff().logging = True
             elif current_arg in ("-k", "--k_value"):
                 k_value = float(current_val)
             elif current_arg in ("-t", "--threshold"):
@@ -47,9 +45,9 @@ def main():
             elif current_arg in ("-r", "--ratio"):
                 ratio = float(current_val)
             elif current_arg in ("--k-pairs"):
-                fsm.k_pairs_output = True
+                FFSMDiff().k_pairs_output = True
             elif current_arg in ("-e", "--equation"):
-                fsm.equation = True
+                FFSMDiff().equation = True
             elif current_arg in ("-m","--matching-file"):
                 matching_file = current_val
             elif current_arg in ("--ref"):
@@ -64,19 +62,20 @@ def main():
                 updated_model = nx.drawing.nx_agraph.read_dot(current_val)
                 updated_filename = current_val
             elif current_arg in ("-h", "--help"):
-                print("Usage: main.py --ref=<reference dot model> --upd=<updated dot model> [-l (add logging in out file) -d (print smt) -e (print linear equation output) -i (print time smt takes) -p (performance matrix) -o <output file> -s <smt-solver> -k <k value> -t <threshold value> -r <ratio value> -m <matching file>]")
-                print("<smt-solver> options:")
-                for solver in SMT_SOLVERS:
+                print("Usage: main.py --ref=<reference dot model> --upd=<updated dot model> [-l (add logging in out file) -d (print smt) -e (print linear equation output) -i (print time smt takes) -p (performance matrix) -o <output file> -s <solver> -k <k value> -t <threshold value> -r <ratio value> -m <matching file>]")
+                print("<solver> options:")
+                for solver in SOLVERS:
                     print('\t' + solver)
                 return
     except getopt.error as err:
         print(str(err))
-    debug.debug_file = output_file
+
     if (not reference_model or not updated_model):
         print("Model not set")
         return
 
-    fsm.output_file = output_file.split(".dot")[0] + ".txt"
+    if FFSMDiff().k_pairs_output == True:
+        FFSMDiff().output_file = output_file.split(".dot")[0] + ".txt"
     
     matching_pairs = None
     if matching_file is not None:
@@ -89,8 +88,8 @@ def main():
         if not "label" in edge[2]:
             edge[2]["label"] = ""
 
-    graph = FSMDiff().algorithm(reference_model,updated_model,k_value,threshold,ratio,matching_pairs)
-    if fsm.logging:
+    graph = FFSMDiff().algorithm(reference_model,updated_model,k_value,threshold,ratio,matching_pairs)
+    if FFSMDiff().logging:
         for idx,val in {"Reference":reference_filename, "Updated":updated_filename, "Output":output_file}.items():
             graph.graph.setdefault(idx,{})
             graph.graph[idx]["Filename"] = val

@@ -1,7 +1,7 @@
 '''FSM module containing the FSM_diff algorithm'''
 from dataclasses import dataclass
 import string
-from typing import List, Tuple, Dict, final
+from typing import List, Tuple, Dict
 from time import time
 import warnings
 
@@ -14,16 +14,8 @@ from scipy.sparse import csc_matrix
 
 from debug import print_smtlib, write_k_pairs_to_file
 
-SMT_SOLVERS = ["msat","cvc4","z3","yices"]
+SOLVERS = ["msat","cvc4","z3","yices", "umfpack"]
 
-current_solver = "umfpack"
-debug = False
-timing = False
-performance = False
-logging = False
-equation = False
-output_file = "out.txt"
-k_pairs_output = False
 
 @dataclass
 class ComparingStates:
@@ -33,19 +25,26 @@ class ComparingStates:
     non_matching_trans: Tuple[List[Dict],List[Dict]]
 
 class Singleton(type):
-    '''This class is used to create a singleton instance of the FSM_Diff class'''
+    '''This class is used to create a singleton instance of the FFSM_Diff class'''
     _instances = {}
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
 
-class FSMDiff(metaclass=Singleton):
-    '''This is singleton class which impelents the FSM_Diff algorithm'''
+class FFSMDiff(metaclass=Singleton):
+    '''This is singleton class which impelents the FFSM_Diff algorithm'''
+    current_solver = "umfpack"
+    debug = False
+    timing = False
+    performance = False
+    logging = False
+    equation = False
+    output_file = "out.txt"
+    k_pairs_output = False
+    out_time = None
+    in_time = None
 
-    def __init__(self):
-        self.out_time = None
-        self.in_time = None
 
     def pair_matching_transition(self,fsm_1,fsm_2,s1,s2,out):
         '''
@@ -162,7 +161,7 @@ class FSMDiff(metaclass=Singleton):
 
             equations = equations + equation
             results.append(len(matched_states))
-            if debug:
+            if self.debug:
                 print(equation, " ",  len(matched_states))
 
         matrix = csc_matrix((np.array(equations),(np.array(rows),np.array(columns))))
@@ -173,7 +172,7 @@ class FSMDiff(metaclass=Singleton):
             self.out_time = (time() - start_time)
         else:
             self.in_time = (time() - start_time)
-        if timing:
+        if self.timing:
             print("%s seconds umfpack execution for " % self.out_time if out else self.in_time, end="")
             print("outgoing transitions" if out else "incoming transitions")
         
@@ -221,15 +220,15 @@ class FSMDiff(metaclass=Singleton):
             equation = Equals(Minus(Times(Real(denominator), variable),  times), Real(len(state_pair.matching_trans)))
             equations.append(equation)
         formula = And(And( (i for i in domain)), And( (i for i in equations)))
-        if debug:
+        if self.debug:
             print_smtlib(formula)
         start_time = time()
-        model = get_model(formula, solver_name=current_solver)
+        model = get_model(formula, solver_name=self.current_solver)
         if out:
             self.out_time = (time() - start_time)
         else:
             self.in_time = (time() - start_time)
-        if timing:
+        if self.timing:
             print("%s seconds SMT execution for " % self.out_time if out else self.in_time, end="")
             print("outgoing transitions" if out else "incoming transitions")
         return_dict = {}
@@ -240,7 +239,7 @@ class FSMDiff(metaclass=Singleton):
     def compute_scores(self,fsm_1, fsm_2, k, matching_pairs):
         ''' Compute the scores for the different possible pairs '''
 
-        solver_function = self.linear_equation_solver if current_solver == "umfpack" else self.linear_equation_solver_smt
+        solver_function = self.linear_equation_solver if self.current_solver == "umfpack" else self.linear_equation_solver_smt
 
         out_match_trans = self.matching_transitions(fsm_1,fsm_2,True)
         outcome_out = solver_function(out_match_trans, k, True, matching_pairs)
@@ -251,7 +250,7 @@ class FSMDiff(metaclass=Singleton):
         result_dict = {}
         for var in outcome_out.keys():
             result_dict[var] = (outcome_out[var] + outcome_in[var]) / 2
-        if equation:
+        if self.equation:
             print(result_dict)
         return result_dict
 
@@ -479,7 +478,7 @@ class FSMDiff(metaclass=Singleton):
         log_dict["Output"] = self.statistics_graph(graph)
         log_dict["Outgoing time"] = "%s" % self.out_time
         log_dict["Incoming time"] = "%s" % self.in_time
-        log_dict["Solver"] = current_solver
+        log_dict["Solver"] = self.current_solver
 
     def algorithm(self, fsm_1, fsm_2, k, t, r, matching_pairs = None):
         '''
@@ -541,20 +540,20 @@ class FSMDiff(metaclass=Singleton):
             for k_p in k_pairs:
                 n_pairs = self.remove_conflicts(n_pairs,k_p)
 
-        if k_pairs_output:
-            write_k_pairs_to_file(k_pairs, output_file)
+        if self.k_pairs_output:
+            write_k_pairs_to_file(k_pairs, self.output_file)
 
         added = self.added_transitions(fsm_1,fsm_2,k_pairs)
         removed = self.removed_transitions(fsm_1,fsm_2,k_pairs)
         matched = self.matched_k_pairs_transitions(fsm_1,fsm_2,k_pairs)
         graph = self.annotade_graph(k_pairs,added,removed,matched)
 
-        if logging:
+        if self.logging:
             self.logging(fsm_1,fsm_2,added,removed,graph,graph.graph)
 
-        if performance and logging:
+        if self.performance and self.logging:
             print(graph.graph)
-        elif performance and not logging:
+        elif self.performance and not self.logging:
             log_dict = {}
             self.logging(fsm_1,fsm_2,added,removed,graph,log_dict)
             print (log_dict)
