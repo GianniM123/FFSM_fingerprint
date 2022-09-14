@@ -1,4 +1,5 @@
 digraph{
+    	graph [version="bowling"];
 "Start Game"
 "Bowling Game"
 "Pause"

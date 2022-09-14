@@ -46,6 +46,22 @@ class FFSMDiff(metaclass=Singleton):
     in_time = None
 
 
+    def preproces_fsm(self,fsm):
+        '''
+        To make it uniform, we add the constraint to all states and transitions
+        '''
+        for node in fsm.nodes.data():
+            if "feature" not in node[1]:
+                node[1]["feature"] = fsm.graph["version"]
+        
+        for edge in fsm.edges.data():
+            if "feature" not in edge[2]:
+                edge[2]["feature"] = fsm.graph["version"]
+
+
+        
+
+
     def pair_matching_transition(self,fsm_1,fsm_2,s1,s2,out):
         '''
         Match the transitions of a set of states
@@ -279,7 +295,7 @@ class FFSMDiff(metaclass=Singleton):
             vars.append(var)
             if pairs_to_scores[var] >= t:
                 filtered_dict[var] = pairs_to_scores[var]
-        landmarks = set()
+        landmarks = []
         for var in vars:
             filtered_vars = list(filter(lambda v: v[0] ==var[0] and not v == var, vars))
             is_landmark = True
@@ -287,7 +303,7 @@ class FFSMDiff(metaclass=Singleton):
                 if not (pairs_to_scores[var] >= (pairs_to_scores[f_var] * r) and var in filtered_dict):
                     is_landmark = False
             if is_landmark:
-                landmarks.add(var)
+                landmarks.append(var)
         return landmarks
 
 
@@ -369,7 +385,7 @@ class FFSMDiff(metaclass=Singleton):
         return letters[index] * value
 
 
-    def annotade_edges(self,graph,k_pairs,set_edges,color, index, nr_of_states):
+    def annotade_edges(self,graph,k_pairs,set_edges, index, nr_of_states):
         '''
         Annotade edges by a color
         Check if the state is already in the graph and otherwise create a new fresh node
@@ -387,7 +403,7 @@ class FFSMDiff(metaclass=Singleton):
                 num = nr_of_states + len(added_dict)
                 from_state = self.fresh_var(num)
                 added_dict[add[0]] = num
-                graph.add_node(from_state,color=color)
+                graph.add_node(from_state,feature=add[2]["feature"])
 
             to_state = None
             for k in k_pairs:
@@ -399,9 +415,9 @@ class FFSMDiff(metaclass=Singleton):
                 num = nr_of_states + len(added_dict)
                 to_state = self.fresh_var(num)
                 added_dict[add[1]] = num
-                graph.add_node(to_state,color=color)
+                graph.add_node(to_state,feature=add[2]["feature"])
 
-            graph.add_edge(from_state,to_state,color=color,label=add[2]["label"])
+            graph.add_edge(from_state,to_state,label=add[2]["label"], feature=add[2]["feature"])
 
         return nr_of_states + len(added_dict)
 
@@ -416,28 +432,43 @@ class FFSMDiff(metaclass=Singleton):
                 if (edge1[0],edge2[0]) in k_pairs and (edge1[1],edge2[1]) in k_pairs and edge2[2]["label"] == edge1[2]["label"]:
                     from_state = self.fresh_var(k_pairs.index((edge1[0],edge2[0])))
                     to_state = self.fresh_var(k_pairs.index((edge1[1],edge2[1])))
-                    edges.append((from_state,to_state,edge2[2]["label"]))
+                    edges.append((from_state,to_state,edge2[2]["label"], edge1[2]["feature"] + " | "  + edge2[2]["feature"]))
         return edges
 
-    def annotade_graph(self, k_pairs, added, removed, matched):
+    def annotade_graph(self, k_pairs, added, removed, matched, fsm_1,fsm_2):
         '''
         Create a graph with the matched, added and removed transitions
         '''
         graph = nx.MultiDiGraph()
         k_pairs = list(k_pairs)
+        initial_state = (list(fsm_1.nodes)[0], list(fsm_2.nodes)[0])
         for i in range(0,len(k_pairs)):
-            graph.add_node(self.fresh_var(i))
+            if k_pairs[i] == initial_state:
+                graph.add_node(self.fresh_var(i),feature = True)
+            else:
+                constraint = ""
+                for node in fsm_1.nodes.data():
+                    if node[0] == k_pairs[i][0]:
+                        constraint = constraint + node[1]["feature"]
+                        break
+                constraint = constraint + " | "
+                for node in fsm_2.nodes.data():
+                    if node[0] == k_pairs[i][1]:
+                        constraint = constraint + node[1]["feature"]
+                        break
+                graph.add_node(self.fresh_var(i),feature=constraint)
+
 
         for i in matched:
-            graph.add_edge(i[0],i[1], label=i[2])
+            graph.add_edge(i[0],i[1], label=i[2],feature=i[3])
 
-        nr_of_states = self.annotade_edges(graph,k_pairs,added,"green",1,len(graph.nodes))
-        self.annotade_edges(graph,k_pairs,removed,"red",0,nr_of_states)
+        nr_of_states = self.annotade_edges(graph,k_pairs,added,1,len(graph.nodes))
+        self.annotade_edges(graph,k_pairs,removed,0,nr_of_states)
         return graph
 
     def performance_matrix(self, fsm_1, FP, FN, perfomance_dict):
         '''
-        Calcualte the performance matrix
+        Calculate the performance matrix
 
         parameters
         ----------
@@ -470,7 +501,7 @@ class FFSMDiff(metaclass=Singleton):
         ''' return basis statistics for the graph '''
         return {"States": len(graph.nodes), "Transitions": len(graph.edges)}
 
-    def logging(self, fsm_1, fsm_2, added, removed, graph, log_dict):
+    def log_to_dict(self, fsm_1, fsm_2, added, removed, graph, log_dict):
         ''' add all log information in one dict '''
         self.performance_matrix(fsm_1,added,removed,log_dict)
         log_dict["Reference"] = self.statistics_graph(fsm_1)
@@ -503,6 +534,9 @@ class FFSMDiff(metaclass=Singleton):
         -------
         nx.MultiDiGraph with added/removed transitions annotated in the graph
         '''
+        self.preproces_fsm(fsm_1)
+        self.preproces_fsm(fsm_2)
+
         if matching_pairs is not None:
             for matching_pair in matching_pairs:
                 if (matching_pair[0] not in fsm_1.nodes or matching_pair[1] not in fsm_2.nodes):
@@ -515,9 +549,9 @@ class FFSMDiff(metaclass=Singleton):
         # line 2
         k_pairs = self.identify_landmarks(pairs_to_scores,t,r)
         # line 3-5
-        key = (list(fsm_1.nodes)[0], list(fsm_2.nodes)[0])
-        if not k_pairs and pairs_to_scores[key] >= 0:
-            k_pairs.add(key)
+        initial_state = (list(fsm_1.nodes)[0], list(fsm_2.nodes)[0])
+        if initial_state not in k_pairs:
+            k_pairs.insert(0,initial_state)
         # line 6
         n_pairs = set()
         for pair in k_pairs:
@@ -531,7 +565,7 @@ class FFSMDiff(metaclass=Singleton):
                 # line 9
                 pair = self.pick_highest(n_pairs,pairs_to_scores)
                 # line 10
-                k_pairs.add(pair)
+                k_pairs.append(pair)
                 # line 11
                 n_pairs = self.remove_conflicts(n_pairs,pair)
             # line 13
@@ -546,10 +580,10 @@ class FFSMDiff(metaclass=Singleton):
         added = self.added_transitions(fsm_1,fsm_2,k_pairs)
         removed = self.removed_transitions(fsm_1,fsm_2,k_pairs)
         matched = self.matched_k_pairs_transitions(fsm_1,fsm_2,k_pairs)
-        graph = self.annotade_graph(k_pairs,added,removed,matched)
+        graph = self.annotade_graph(k_pairs,added,removed,matched,fsm_1,fsm_2)
 
         if self.logging:
-            self.logging(fsm_1,fsm_2,added,removed,graph,graph.graph)
+            self.log_to_dict(fsm_1,fsm_2,added,removed,graph,graph.graph)
 
         if self.performance and self.logging:
             print(graph.graph)

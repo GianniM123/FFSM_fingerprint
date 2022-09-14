@@ -1,4 +1,5 @@
 digraph G {
+    graph [version="Windows8"];
 label=""
 s0 [color="red"]
 s1
