@@ -1,0 +1,18 @@
+digraph{
+    	graph [version="brickles"];
+"Start Game"
+"Brickles Game"
+"Pause"
+
+"Start Game" -> "Brickles Game" [label="Start / 1"]
+"Start Game" -> "Start Game" [label="Exit / 1"]
+"Start Game" -> "Pause" [label="Pause / 1"] 
+"Brickles Game" -> "Brickles Game" [label="Start / 0"] 
+"Brickles Game" -> "Brickles Game" [label="Exit / 0"]
+"Brickles Game" -> "Pause" [label="Pause / 1"]
+"Pause"  -> "Brickles Game" [label="Start / 1"]
+"Pause"  -> "Start Game" [label="Exit / 1"]
+"Pause"  -> "Pause" [label="Pause / 0"] 
+}
+
+
