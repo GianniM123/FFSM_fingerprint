@@ -20,7 +20,7 @@ public class App
             Attribute attr = attributes.get("feature");
             String value = attr.getValue();
             String[] features = value.split("\\|");
-            if (features[0] == "True"){
+            if (features[0].equals("True")){
                 return new ConditionalState(name,new String[0]);
             }
             return new ConditionalState(name,features);
@@ -32,7 +32,10 @@ public class App
             Attribute attr = attributes.get("feature");
             String value = attr.getValue();
             String[] features = value.split("\\|");
-            return new ConditionalEdge(features);
+
+            Attribute attrLabel = attributes.get("label");
+            String label = attrLabel.getValue();
+            return new ConditionalEdge(features,label);
         };
         importGraph.setEdgeWithAttributesFactory(factoryEdge);
         // File myObj = new File("../FFSM_diff/dot-files/bowling.dot");
