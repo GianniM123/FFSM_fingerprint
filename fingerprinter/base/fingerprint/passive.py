@@ -1,4 +1,4 @@
-from FFSM.FFSM import FFSM, ConditionalState
+from base.FFSM.FFSM import FFSM, ConditionalState
 
 
 def feature_selection(current_features : list[str], new_features : list[str]):
@@ -31,12 +31,15 @@ def trace_fingerprinting(ffsm : FFSM, trace : list[(str,str)]):
         for state, feature_con in features:
             transitions = ffsm.outgoing_transitions_of(ConditionalState(state,[]))
             for transition in transitions:
-
                 if transition.input == input and transition.output == output:
                     # check if the features are confirm
                     features_config = feature_selection(feature_con, transition.features)
                     if len(features_config) > 0:
                         new_states.append((transition.to_state.state_id, features_config))
         features = new_states
-    print(features)
-    return features
+    
+    possible_features = set()
+    for s, feature in features:
+        for f in feature:
+            possible_features.add(f)
+    return possible_features

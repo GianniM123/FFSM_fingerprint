@@ -432,7 +432,7 @@ class FFSMDiff(metaclass=Singleton):
                 if (edge1[0],edge2[0]) in k_pairs and (edge1[1],edge2[1]) in k_pairs and edge2[2]["label"] == edge1[2]["label"]:
                     from_state = self.fresh_var(k_pairs.index((edge1[0],edge2[0])))
                     to_state = self.fresh_var(k_pairs.index((edge1[1],edge2[1])))
-                    edges.append((from_state,to_state,edge2[2]["label"], edge1[2]["feature"] + " | "  + edge2[2]["feature"]))
+                    edges.append((from_state,to_state,edge2[2]["label"], edge1[2]["feature"] + "|"  + edge2[2]["feature"]))
         return edges
 
     def annotade_graph(self, k_pairs, added, removed, matched, fsm_1,fsm_2):
@@ -451,7 +451,7 @@ class FFSMDiff(metaclass=Singleton):
                     if node[0] == k_pairs[i][0]:
                         constraint = constraint + node[1]["feature"]
                         break
-                constraint = constraint + " | "
+                constraint = constraint + "|"
                 for node in fsm_2.nodes.data():
                     if node[0] == k_pairs[i][1]:
                         constraint = constraint + node[1]["feature"]
