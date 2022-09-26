@@ -1,7 +1,7 @@
 from base.FFSM.FFSM import FFSM, ConditionalState
 
 
-def feature_selection(current_features : list[str], new_features : list[str]):
+def unify_features(current_features : list[str], new_features : list[str]):
     if current_features == []:
         return new_features
     
@@ -20,26 +20,25 @@ def feature_selection(current_features : list[str], new_features : list[str]):
 
 
 def trace_fingerprinting(ffsm : FFSM, trace : list[(str,str)]):
-    states = list(ffsm.states)
+    uncertainty = []
+    for s in ffsm.states:
+        uncertainty.append((s.state_id, s.features))
 
-    features = []
-    for s in states:
-        features.append((s.state_id, s.features))
-
-    for input, output in trace:
-        new_states = []
-        for state, feature_con in features:
-            transitions = ffsm.outgoing_transitions_of(ConditionalState(state,[]))
-            for transition in transitions:
-                if transition.input == input and transition.output == output:
+    trace_id = 0
+    while uncertainty != [] and trace_id < len(trace):
+        new_uncertainty = []
+        for transition in ffsm.transitions:
+            for state, feature_con in uncertainty:
+                if transition.from_state.state_id == state and transition.input == trace[trace_id][0] and transition.output == trace[trace_id][1]:
                     # check if the features are confirm
-                    features_config = feature_selection(feature_con, transition.features)
+                    features_config = unify_features(feature_con, transition.features)
                     if len(features_config) > 0:
-                        new_states.append((transition.to_state.state_id, features_config))
-        features = new_states
+                        new_uncertainty.append((transition.to_state.state_id, features_config))
+        uncertainty = new_uncertainty
+        trace_id = trace_id + 1
     
     possible_features = set()
-    for s, feature in features:
+    for s, feature in uncertainty:
         for f in feature:
             possible_features.add(f)
     return possible_features
