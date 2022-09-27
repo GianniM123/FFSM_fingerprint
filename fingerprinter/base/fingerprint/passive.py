@@ -1,21 +1,21 @@
-from base.FFSM.FFSM import FFSM, ConditionalState
+from base.FFSM.FFSM import FFSM
 
 
-def unify_features(current_features : list[str], new_features : list[str]):
-    if current_features == []:
-        return new_features
+def unify_features(current_variants : list[str], new_variants : list[str]):
+    if current_variants == []:
+        return new_variants
+    elif new_variants == []:
+        return current_variants
     
-    current = set(current_features)
-    new = set(new_features)
+    current = set(current_variants)
+    new = set(new_variants)
 
     if new.issubset(current):
-        return new_features
-
-
-    for feature in current_features:
-        if feature not in new_features:
-            return []
-    return current_features
+        return new_variants
+    elif current.issubset(new):
+        return current_variants
+    
+    return []
 
 
 
@@ -33,7 +33,9 @@ def trace_fingerprinting(ffsm : FFSM, trace : list[(str,str)]):
                     # check if the features are confirm
                     features_config = unify_features(feature_con, transition.features)
                     if len(features_config) > 0:
-                        new_uncertainty.append((transition.to_state.state_id, features_config))
+                        pair = (transition.to_state.state_id, features_config)
+                        if pair not in new_uncertainty: # list is not a hashable type, therefore can't use set
+                            new_uncertainty.append(pair)
         uncertainty = new_uncertainty
         trace_id = trace_id + 1
     
