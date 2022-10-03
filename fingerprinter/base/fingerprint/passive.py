@@ -7,15 +7,14 @@ def unify_features(current_variants : list[str], new_variants : list[str]):
     elif new_variants == []:
         return current_variants
     
-    current = set(current_variants)
-    new = set(new_variants)
+    equal_variants = []
+    for current_variant in current_variants:
+        for new_variant in new_variants:
+            if current_variant == new_variant:
+                equal_variants.append(current_variant)
+                break
 
-    if new.issubset(current):
-        return new_variants
-    elif current.issubset(new):
-        return current_variants
-    
-    return []
+    return equal_variants
 
 
 
@@ -32,10 +31,10 @@ def trace_fingerprinting(ffsm : FFSM, trace : list[(str,str)]):
                 if transition.from_state.state_id == state and transition.input == trace[trace_id][0] and transition.output == trace[trace_id][1]:
                     # check if the features are confirm
                     features_config = unify_features(feature_con, transition.features)
-                    if len(features_config) > 0:
-                        pair = (transition.to_state.state_id, features_config)
-                        if pair not in new_uncertainty: # list is not a hashable type, therefore can't use set
-                            new_uncertainty.append(pair)
+                    pair = (transition.to_state.state_id, features_config)
+                    if pair not in new_uncertainty: # list is not a hashable type, therefore can't use set
+                        new_uncertainty.append(pair)
+                            
         uncertainty = new_uncertainty
         trace_id = trace_id + 1
     

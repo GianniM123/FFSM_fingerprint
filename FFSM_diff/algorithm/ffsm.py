@@ -16,6 +16,7 @@ from debug import print_smtlib, write_k_pairs_to_file
 
 SOLVERS = ["msat","cvc4","z3","yices", "umfpack"]
 
+INITIAL_STATE_NAME = "__start0"
 
 @dataclass
 class ComparingStates:
@@ -51,11 +52,11 @@ class FFSMDiff(metaclass=Singleton):
         To make it uniform, we add the constraint to all states and transitions
         '''
         for node in fsm.nodes.data():
-            if "feature" not in node[1]:
+            if "feature" not in node[1] and node[0] != INITIAL_STATE_NAME:
                 node[1]["feature"] = fsm.graph["version"]
         
         for edge in fsm.edges.data():
-            if "feature" not in edge[2]:
+            if "feature" not in edge[2] and edge[0] != INITIAL_STATE_NAME:
                 edge[2]["feature"] = fsm.graph["version"]
 
 
@@ -429,22 +430,26 @@ class FFSMDiff(metaclass=Singleton):
         k_pairs = list(k_pairs)
         for edge1 in fsm_1.edges.data():
             for edge2 in fsm_2.edges.data():
-                if (edge1[0],edge2[0]) in k_pairs and (edge1[1],edge2[1]) in k_pairs and edge2[2]["label"] == edge1[2]["label"]:
+                if (edge1[0],edge2[0]) == (INITIAL_STATE_NAME, INITIAL_STATE_NAME):
+                    to_state = self.fresh_var(k_pairs.index((edge1[1],edge2[1])))
+                    edges.append((INITIAL_STATE_NAME,to_state,edge2[2]["label"],""))
+                elif (edge1[0],edge2[0]) in k_pairs and (edge1[1],edge2[1]) in k_pairs and edge2[2]["label"] == edge1[2]["label"]:
                     from_state = self.fresh_var(k_pairs.index((edge1[0],edge2[0])))
                     to_state = self.fresh_var(k_pairs.index((edge1[1],edge2[1])))
                     edges.append((from_state,to_state,edge2[2]["label"], edge1[2]["feature"] + "|"  + edge2[2]["feature"]))
         return edges
 
-    def annotade_graph(self, k_pairs, added, removed, matched, fsm_1,fsm_2):
+    def annotade_graph(self, k_pairs, added, removed, matched, fsm_1,fsm_2, initial_state):
         '''
         Create a graph with the matched, added and removed transitions
         '''
         graph = nx.MultiDiGraph()
         k_pairs = list(k_pairs)
-        initial_state = (list(fsm_1.nodes)[0], list(fsm_2.nodes)[0])
         for i in range(0,len(k_pairs)):
             if k_pairs[i] == initial_state:
                 graph.add_node(self.fresh_var(i),feature = True)
+            elif k_pairs[i] == (INITIAL_STATE_NAME,INITIAL_STATE_NAME):
+                graph.add_node(INITIAL_STATE_NAME,feature = True)
             else:
                 constraint = ""
                 for node in fsm_1.nodes.data():
@@ -548,9 +553,21 @@ class FFSMDiff(metaclass=Singleton):
 
         # line 2
         k_pairs = self.identify_landmarks(pairs_to_scores,t,r)
+        
         # line 3-5
-        initial_state = (list(fsm_1.nodes)[0], list(fsm_2.nodes)[0])
-        if initial_state not in k_pairs:
+        initial_state = None
+        for node1  in fsm_1.nodes:
+            for node2 in fsm_2.nodes:
+                if node1 == INITIAL_STATE_NAME and node2 == INITIAL_STATE_NAME: # conform https://automata.cs.ru.nl/Syntax/Overview
+                    edge1 = fsm_1.edges(node1)
+                    edge2 = fsm_2.edges(node2)
+                    initial_state = (list(edge1)[0][1], list(edge2)[0][1])
+                    break
+            if initial_state != None:
+                break
+        if initial_state == None:
+            warnings.warn("Please update the graphs conform the standard of automata wiki: https://automata.cs.ru.nl/Syntax/Overview")
+        elif initial_state not in k_pairs:
             k_pairs.insert(0,initial_state)
         # line 6
         n_pairs = set()
@@ -558,7 +575,6 @@ class FFSMDiff(metaclass=Singleton):
             n_pairs = n_pairs.union(self.surrounding_pairs(fsm_1,fsm_2,pair))
         for k_p in k_pairs:
             n_pairs = self.remove_conflicts(n_pairs,k_p)
-
         # line 7 - 14
         while n_pairs:
             while n_pairs:
@@ -580,7 +596,7 @@ class FFSMDiff(metaclass=Singleton):
         added = self.added_transitions(fsm_1,fsm_2,k_pairs)
         removed = self.removed_transitions(fsm_1,fsm_2,k_pairs)
         matched = self.matched_k_pairs_transitions(fsm_1,fsm_2,k_pairs)
-        graph = self.annotade_graph(k_pairs,added,removed,matched,fsm_1,fsm_2)
+        graph = self.annotade_graph(k_pairs,added,removed,matched,fsm_1,fsm_2, initial_state)
 
         if self.logging:
             self.log_to_dict(fsm_1,fsm_2,added,removed,graph,graph.graph)

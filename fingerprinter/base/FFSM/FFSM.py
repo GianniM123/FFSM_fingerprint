@@ -30,8 +30,9 @@ class ConditionalTransition():
 
 class FFSM():
     
-    def __init__(self, transitions: list[ConditionalTransition]):
+    def __init__(self, transitions: list[ConditionalTransition], initial_state: ConditionalState):
         self.transitions = transitions
+        self.initial_state = initial_state
 
         self.states = []
         for transition in self.transitions:
@@ -51,14 +52,16 @@ class FFSM():
                 features = []
             states[state[0]] = ConditionalState(state[0],features)
         
+        initial_state = None
         transitions = []
         for transition in ffsm.edges.data():
+            if transition[0] == "__start0":
+                initial_state = states[transition[1]]
+                continue
             in_output = transition[2]["label"].split("/")
             features = transition[2]["feature"].split("|")
             transitions.append(ConditionalTransition(states[transition[0]], states[transition[1]], in_output[0], in_output[1],features))
-
-        
-        return FFSM(transitions)
+        return FFSM(transitions, initial_state)
         
     def __str__(self) -> str:
         output = ""

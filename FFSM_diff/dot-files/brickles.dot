@@ -1,5 +1,8 @@
 digraph{
     	graph [version="brickles"];
+
+__start0 [label="" shape="none"];
+__start0 -> "Start Game";
 "Start Game"
 "Brickles Game"
 "Pause"

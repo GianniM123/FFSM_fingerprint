@@ -1,5 +1,9 @@
 digraph{
     graph [version="pong"];
+
+__start0 [label="" shape="none"];
+__start0 -> "Start Game";
+
 "Start Game"
 "Pong Game"
 "Pause"
