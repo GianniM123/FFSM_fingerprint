@@ -449,7 +449,7 @@ class FFSMDiff(metaclass=Singleton):
             if k_pairs[i] == initial_state:
                 graph.add_node(self.fresh_var(i),feature = True)
             elif k_pairs[i] == (INITIAL_STATE_NAME,INITIAL_STATE_NAME):
-                graph.add_node(INITIAL_STATE_NAME,feature = True)
+                graph.add_node(INITIAL_STATE_NAME,feature = True, shape="none",label="")
             else:
                 constraint = ""
                 for node in fsm_1.nodes.data():
