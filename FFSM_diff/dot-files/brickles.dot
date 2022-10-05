@@ -8,18 +8,18 @@ __start0 -> "Start Game";
 "Pause"
 "Save"
 
-"Start Game" -> "Brickles Game" [label="Start / 1"]
-"Start Game" -> "Start Game" [label="Exit / 1"]
-"Start Game" -> "Pause" [label="Pause / 1"] 
-"Brickles Game" -> "Brickles Game" [label="Start / 0"] 
-"Brickles Game" -> "Brickles Game" [label="Exit / 0"]
-"Brickles Game" -> "Save" [label="Pause / 1"]
-"Pause"  -> "Brickles Game" [label="Start / 1"]
-"Pause"  -> "Start Game" [label="Exit / 1"]
-"Pause"  -> "Pause" [label="Pause / 0"]
-"Save" -> "Brickles Game" [label="Start / 1"]
-"Save" -> "Start Game" [label="Exit / 1"]
-"Save" -> "Pause" [label="Pause / 1"]
+"Start Game" -> "Brickles Game" [label="Start/1"]
+"Start Game" -> "Start Game" [label="Exit/1"]
+"Start Game" -> "Pause" [label="Pause/1"] 
+"Brickles Game" -> "Brickles Game" [label="Start/0"] 
+"Brickles Game" -> "Brickles Game" [label="Exit/0"]
+"Brickles Game" -> "Save" [label="Pause/1"]
+"Pause"  -> "Brickles Game" [label="Start/1"]
+"Pause"  -> "Start Game" [label="Exit/1"]
+"Pause"  -> "Pause" [label="Pause/0"]
+"Save" -> "Brickles Game" [label="Start/1"]
+"Save" -> "Start Game" [label="Exit/1"]
+"Save" -> "Save" [label="Pause/0"]
 }
 
 

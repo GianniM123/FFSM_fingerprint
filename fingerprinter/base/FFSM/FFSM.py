@@ -1,5 +1,20 @@
 import networkx as nx
 
+def unify_features(current_variants : list[str], new_variants : list[str]):
+    if current_variants == []:
+        return new_variants
+    elif new_variants == []:
+        return current_variants
+    
+    equal_variants = []
+    for current_variant in current_variants:
+        for new_variant in new_variants:
+            if current_variant == new_variant:
+                equal_variants.append(current_variant)
+                break
+
+    return equal_variants
+
 class ConditionalState():
     
     def __init__(self, state_id : str, features : list[str]):
@@ -33,6 +48,7 @@ class FFSM():
     def __init__(self, transitions: list[ConditionalTransition], initial_state: ConditionalState):
         self.transitions = transitions
         self.initial_state = initial_state
+        self.current_states = [(initial_state, [])]
 
         self.states = []
         for transition in self.transitions:
@@ -69,15 +85,32 @@ class FFSM():
             output = output + transition.__str__()
         return output
 
+    def step(self, input : str, features : list[str]) -> list[(str, list[str])]:
+        new_current_states = []
+        outputs = []
+        for current_state, feature_config in self.current_states:
+            if len(unify_features(feature_config, features)) > 0 or (features == [] and feature_config == []):
+                transitions = self.outgoing_transitions_of(current_state)
+                for transition in transitions:
+                    feature_config_transition = unify_features(features,transition.features)
+                    if transition.input == input and len(feature_config_transition) > 0:
+                        new_current_states.append((transition.to_state, feature_config_transition))
+                        outputs.append((transition.output, feature_config_transition))
+        if new_current_states == []:
+            raise Exception("Invalid input: ", input, " given the features: ", features)
+        else:
+            self.current_states = new_current_states
+        return outputs
 
-    def incoming_transitions_of(self, state : ConditionalState):
+
+    def incoming_transitions_of(self, state : ConditionalState) -> list[ConditionalTransition]:
         incoming_transitions = []
         for transition in self.transitions:
             if transition.to_state == state:
                 incoming_transitions.append(transition)
         return incoming_transitions
 
-    def outgoing_transitions_of(self, state : ConditionalState):
+    def outgoing_transitions_of(self, state : ConditionalState) -> list[ConditionalTransition]:
         outgoing_transitions = []
         for transition in self.transitions:
             if transition.from_state == state:

@@ -1,20 +1,4 @@
-from base.FFSM.FFSM import FFSM
-
-
-def unify_features(current_variants : list[str], new_variants : list[str]):
-    if current_variants == []:
-        return new_variants
-    elif new_variants == []:
-        return current_variants
-    
-    equal_variants = []
-    for current_variant in current_variants:
-        for new_variant in new_variants:
-            if current_variant == new_variant:
-                equal_variants.append(current_variant)
-                break
-
-    return equal_variants
+from base.FFSM.FFSM import FFSM, unify_features
 
 
 

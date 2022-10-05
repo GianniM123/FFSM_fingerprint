@@ -1,5 +1,7 @@
 digraph {
     graph [version="1.0.2_full"];
+__start0 [label="" shape="none"];
+__start0 -> 8;
 8
 0
 1

@@ -298,7 +298,7 @@ class FFSMDiff(metaclass=Singleton):
                 filtered_dict[var] = pairs_to_scores[var]
         landmarks = []
         for var in vars:
-            filtered_vars = list(filter(lambda v: v[0] ==var[0] and not v == var, vars))
+            filtered_vars = list(filter(lambda v: (v[0] ==var[0] or v[1] == var[1]) and not v == var, vars))
             is_landmark = True
             for f_var in filtered_vars:
                 if not (pairs_to_scores[var] >= (pairs_to_scores[f_var] * r) and var in filtered_dict):
