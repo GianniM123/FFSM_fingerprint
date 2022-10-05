@@ -29,7 +29,6 @@ class ConditionalState():
     def __str__(self) -> str:
         return "(" + self.state_id + ", " + self.features.__str__() + ")"
 
-
 class ConditionalTransition():
 
     def __init__(self, from_state: ConditionalState, to_state: ConditionalState, input : str, output : str, features : list[str]):
@@ -51,11 +50,15 @@ class FFSM():
         self.current_states = [(initial_state, [])]
 
         self.states = []
+        self.features = set()
+        self.alphabet = set()
         for transition in self.transitions:
             if transition.from_state not in self.states:
                 self.states.append(transition.from_state)
             if transition.to_state not in self.states:
-                self.states.append(transition.to_state)        
+                self.states.append(transition.to_state)  
+            self.features = self.features.union(set(transition.features))
+            self.alphabet.add(transition.input)      
 
     @classmethod
     def from_file(self, file: str):
@@ -85,11 +88,12 @@ class FFSM():
             output = output + transition.__str__()
         return output
 
-    def step(self, input : str, features : list[str]) -> list[(str, list[str])]:
+    def step(self, input : str, features_in : list[str] = []) -> list[(str, list[str])]:
         new_current_states = []
         outputs = []
         for current_state, feature_config in self.current_states:
-            if len(unify_features(feature_config, features)) > 0 or (features == [] and feature_config == []):
+            features = unify_features(feature_config, features_in)
+            if len(features) > 0 or (features == [] and feature_config == []):
                 transitions = self.outgoing_transitions_of(current_state)
                 for transition in transitions:
                     feature_config_transition = unify_features(features,transition.features)
@@ -102,6 +106,8 @@ class FFSM():
             self.current_states = new_current_states
         return outputs
 
+    def reset_to_initial_state(self):
+        self.current_states = [(self.initial_state, [])]
 
     def incoming_transitions_of(self, state : ConditionalState) -> list[ConditionalTransition]:
         incoming_transitions = []
