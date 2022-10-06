@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 import copy
-from time import sleep
 
 from aalpy.SULs.AutomataSUL import MealySUL
 from base.FFSM.FFSM import FFSM
@@ -23,7 +22,7 @@ class Option:
                         match_found = True
                 equal = equal and match_found
 
-            return self.features == other.features and len(current_state_1) == len(current_state_2) and equal
+            return self.features.sort() == other.features.sort() and len(current_state_1) == len(current_state_2) and equal
 
 
 
@@ -35,7 +34,7 @@ class Simulator:
     def _calculate_graph(self):
         self.ffsm.reset_to_initial_state()
         seen_states = []
-        options = [Option([],copy.deepcopy(self.ffsm), [])]
+        options = [Option(list(self.ffsm.features),copy.deepcopy(self.ffsm), [])]
         while len(options) > 0:
             options.sort(key=lambda x : len(x.features))
             to_discover = options[0]
