@@ -39,15 +39,16 @@ class Node:
                 no_refinement = True
                 for _, node in outputs:
                     can_be_removed = node.optimize(seen)
+                    node.features.sort()
+                    self.features.sort()
                     no_refinement = no_refinement and node.features == self.features and can_be_removed
                 if no_refinement:
                     to_remove_inputs.append(input)
             for input in to_remove_inputs:
                 self.childeren.pop(input)
         
-        return not (self.childeren == {} and len(self.features)) or self.childeren != {}
-
-
+            return self.childeren == {}
+        return True
 
 
 class Simulator:
@@ -101,7 +102,7 @@ class Simulator:
         
         # possible_fingerprint = sorted(seen_states,key=lambda x : len(x.sequence))
         root.optimize()
-        print(root.childeren["Start"][0])
+        print(root.childeren["Start"][0][1])
         # print(root.childeren["Pause"][1][1].childeren["Pause"][0][1].features)
         # print(root)
         # print("all_seen:")
