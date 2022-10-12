@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 import copy
-from re import I
-from tracemalloc import start
 
 from aalpy.SULs.AutomataSUL import MealySUL
 from base.FFSM.FFSM import FFSM
@@ -11,7 +9,7 @@ from base.FFSM.FFSM import FFSM
 @dataclass
 class Node:
     root: bool
-    features: list[str]
+    features: set[str]
     ffsm: FFSM
     childeren: dict[str,list[tuple[str,'Node']]]
 
@@ -27,8 +25,6 @@ class Node:
                         match_found = True
                         break
                 equal = equal and match_found
-            self.features.sort()
-            other.features.sort()
             return (self.features == other.features) and (len(current_state_1) == len(current_state_2)) and equal
     
     def optimize(self, seen :list['Node'] = []) -> bool:
@@ -39,8 +35,6 @@ class Node:
                 no_refinement = True
                 for _, node in outputs:
                     can_be_removed = node.optimize(seen)
-                    node.features.sort()
-                    self.features.sort()
                     no_refinement = no_refinement and node.features == self.features and can_be_removed
                 if no_refinement:
                     to_remove_inputs.append(input)
@@ -62,7 +56,6 @@ class Simulator:
         root = Node(True,list(self.ffsm.features),copy.deepcopy(self.ffsm), {})
         options = [root]
         while len(options) > 0:
-            # options.sort(key=lambda x : len(x.features))
             to_discover = options[0]
             options.pop(0)
             seen_states.append(to_discover)
@@ -79,7 +72,7 @@ class Simulator:
                     for key, value in output_dict.items():
                         node_ffsm = copy.deepcopy(to_discover.ffsm)
                         node_ffsm.step(input, list(value))
-                        node_option = Node(False,list(value),node_ffsm, {})
+                        node_option = Node(False,value,node_ffsm, {})
                         if node_option in seen_states and node_option != to_discover:
                             index = seen_states.index(node_option)
                             if(seen_states[index].root == False):
@@ -100,12 +93,8 @@ class Simulator:
                     print(e)
                     continue # current input not possible (can be due to being not input complete)
         
-        # possible_fingerprint = sorted(seen_states,key=lambda x : len(x.sequence))
         root.optimize()
-        print(root.childeren["Start"][0][1])
-        # print(root.childeren["Pause"][1][1].childeren["Pause"][0][1].features)
-        # print(root)
-        # print("all_seen:")
+        print(root.childeren["Pause"][0][1])
 
             
     
