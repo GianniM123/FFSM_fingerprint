@@ -1,10 +1,27 @@
 from dataclasses import dataclass
 import copy
+from sre_constants import NOT_LITERAL_UNI_IGNORE
+import networkx as nx
+import string
 
 from aalpy.SULs.AutomataSUL import MealySUL
 from base.FFSM.FFSM import FFSM
 
 
+def fresh_var(index):
+    '''Generate a fresh variable on basis of the given index'''
+    letters = string.ascii_lowercase
+    value = 1
+    if index >= len(letters):
+        value = int(index / len(letters)) + 1
+        index = index % len(letters)
+    return letters[index] * value
+
+def id_in_list(id, list):
+    for ids in list:
+        if ids[0] == id:
+            return ids[1]
+    return None
 
 @dataclass
 class Node:
@@ -70,6 +87,29 @@ class Node:
                 list_inputs.append(input)
         return list_inputs
         
+    def to_dot(self, graph : nx.MultiDiGraph, identifiers : list[tuple['Node',str]] = []):
+        id = id_in_list(self, identifiers)
+        if id == None:
+            id = fresh_var(len(identifiers))
+            identifiers.append((self,id))
+            graph.add_node(id, label=str(self.features))
+        
+        counter = 0
+        for input, outputs in self.childeren.items():
+            graph.add_node(id + str(counter))
+            graph.add_edge(id, id + str(counter), label=input)
+            
+            for out, node in outputs:
+                node_id = id_in_list(node, identifiers)
+                if node_id == None:
+                    node_id = fresh_var(len(identifiers))
+                    identifiers.append((node,node_id))
+                    graph.add_node(node_id, label=str(node.features))
+                    node.to_dot(graph,identifiers)
+                graph.add_edge(id + str(counter), node_id, label=out)
+            counter = counter+1
+                
+        return graph
 
 
 class Simulator:
@@ -120,10 +160,13 @@ class Simulator:
                     print(e)
                     continue # current input not possible (can be due to being not input complete)
         
-        root.optimize()
+        # root.optimize()
+        print(seen_states)
         print(root.possible_inputs())
 
-
+        g = nx.MultiDiGraph()
+        root.to_dot(g)
+        nx.drawing.nx_agraph.write_dot(g,"test.dot")
             
     
     
