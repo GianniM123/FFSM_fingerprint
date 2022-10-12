@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 import copy
+from re import I
+from tracemalloc import start
 
 from aalpy.SULs.AutomataSUL import MealySUL
 from base.FFSM.FFSM import FFSM
@@ -8,6 +10,7 @@ from base.FFSM.FFSM import FFSM
 
 @dataclass
 class Node:
+    root: bool
     features: list[str]
     ffsm: FFSM
     childeren: dict[str,list[tuple[str,'Node']]]
@@ -28,16 +31,22 @@ class Node:
             other.features.sort()
             return (self.features == other.features) and (len(current_state_1) == len(current_state_2)) and equal
     
-    def __str__(self) -> str:
-        children_str = ""
-        for input, outputs in self.childeren.items():
-            children_str = children_str + "(" + input + " {"
-            for out, node in outputs:
-                # print(output[0])
-                children_str = children_str + out + " " + node.__str__()
-            children_str = children_str +"})"
+    def optimize(self, seen :list['Node'] = []) -> bool:
+        if self not in seen:
+            seen.append(self)
+            to_remove_inputs = []
+            for input, outputs in self.childeren.items():
+                no_refinement = True
+                for _, node in outputs:
+                    can_be_removed = node.optimize(seen)
+                    no_refinement = no_refinement and node.features == self.features and can_be_removed
+                if no_refinement:
+                    to_remove_inputs.append(input)
+            for input in to_remove_inputs:
+                self.childeren.pop(input)
+        
+        return not (self.childeren == {} and len(self.features)) or self.childeren != {}
 
-        return "(" + self.features.__str__() + " " + children_str + ")"
 
 
 
@@ -49,7 +58,7 @@ class Simulator:
     def _calculate_graph(self):
         self.ffsm.reset_to_initial_state()
         seen_states = []
-        root = Node(list(self.ffsm.features),copy.deepcopy(self.ffsm), {})
+        root = Node(True,list(self.ffsm.features),copy.deepcopy(self.ffsm), {})
         options = [root]
         while len(options) > 0:
             # options.sort(key=lambda x : len(x.features))
@@ -69,10 +78,12 @@ class Simulator:
                     for key, value in output_dict.items():
                         node_ffsm = copy.deepcopy(to_discover.ffsm)
                         node_ffsm.step(input, list(value))
-                        node_option = Node(list(value),node_ffsm, {})
-                        if node_option in seen_states:
+                        node_option = Node(False,list(value),node_ffsm, {})
+                        if node_option in seen_states and node_option != to_discover:
                             index = seen_states.index(node_option)
-                            node_option = seen_states[index]
+                            if(seen_states[index].root == False):
+                                node_option = seen_states[index]
+
 
                         if input in to_discover.childeren.keys():
                             to_discover.childeren[input].append((key,node_option))
@@ -89,11 +100,12 @@ class Simulator:
                     continue # current input not possible (can be due to being not input complete)
         
         # possible_fingerprint = sorted(seen_states,key=lambda x : len(x.sequence))
-        print(root.childeren["Pause"][1][1].childeren["Pause"][0][1].features)
-        # print(seen_states)
+        root.optimize()
+        print(root.childeren["Start"][0])
+        # print(root.childeren["Pause"][1][1].childeren["Pause"][0][1].features)
+        # print(root)
         # print("all_seen:")
-        # for i in seen_states:
-        #     print(i.features, " ", i.sequence)
+
             
     
     
