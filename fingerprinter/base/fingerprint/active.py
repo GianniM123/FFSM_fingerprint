@@ -44,44 +44,31 @@ class Node:
             return self.childeren == {}
         return True
     
-    def can_split_features(self, seen :list['Node'] = []) -> int:
+    def can_split_features(self, seen :list['Node'] = []) -> bool:
+        if self.childeren == {} and len(self.features) == 1:
+            return True
+        elif self.childeren == {} and len(self.features) > 1:
+            return False
         if self not in seen:
             seen.append(self)
-            if self.childeren == {} and len(self.features) == 1:
-                return 1
-            elif self.childeren == {} and len(self.features) > 1:
-                return -1
-            else:
-                lowest_inputs = -1
-                for _, outputs in self.childeren.items():
-                    total_inputs = 0
-                    for _, node in outputs:
-                        nr_inputs = node.can_split_features(seen)
-                        if nr_inputs > 0:
-                            total_inputs = total_inputs + nr_inputs + 1
-                        else:
-                            total_inputs = -1
-                            break
-                    if lowest_inputs == -1 or (lowest_inputs > total_inputs and total_inputs != -1):
-                        lowest_inputs = total_inputs
-                return lowest_inputs
-        return 0
+            can_split = False
+            for _, outputs in self.childeren.items():
+                can_one_split = True
+                for _, node in outputs:
+                    can_one_split = can_one_split and node.can_split_features(seen)
+                can_split = can_split or can_one_split
+            return can_split
+        return True
 
-    def best_input(self) -> str:
-        input_pair = ("",-1)
+    def possible_inputs(self) -> list[str]:
+        list_inputs = []
         for input, outputs in self.childeren.items():
-            total_inputs = 0
+            all_can = True
             for _, node in outputs:
-                nr_inputs = node.can_split_features([self])
-                if nr_inputs > 0:
-                    total_inputs = total_inputs + nr_inputs
-                else:
-                    total_inputs = -1
-                    break
-            print((input,total_inputs))
-            if input_pair[1] == -1 or (input_pair[1] > total_inputs and total_inputs != -1):
-                input_pair = (input,total_inputs)
-        print("res: ", input_pair)
+                all_can = all_can and node.can_split_features([self])
+            if all_can:
+                list_inputs.append(input)
+        return list_inputs
         
 
 
@@ -134,9 +121,7 @@ class Simulator:
                     continue # current input not possible (can be due to being not input complete)
         
         root.optimize()
-        root.best_input()
-
-        # print()
+        print(root.possible_inputs())
 
 
             
