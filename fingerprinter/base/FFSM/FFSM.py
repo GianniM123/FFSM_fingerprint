@@ -107,7 +107,7 @@ class FFSM():
         return outputs
 
     def reset_to_initial_state(self):
-        self.current_states = [(self.initial_state, [])]
+        self.current_states = [(self.initial_state, list(self.features))]
 
     def incoming_transitions_of(self, state : ConditionalState) -> list[ConditionalTransition]:
         incoming_transitions = []
