@@ -184,6 +184,7 @@ class Simulator:
 
         for node in to_remove_node:
             graph.remove_node(node)
+        
 
     def _can_detect_change(self, graph : nx.MultiGraph, current_features : set[str]) -> bool:
         for node in graph.nodes.data():
@@ -208,23 +209,22 @@ class Simulator:
                 edge = random.choice(list(edges))
                 input = edge[2]["label"]
                 try:
-                    print(input)
+                    # print(input)
                     output = sul.step(input)
-                    print(output)
+                    # print(output)
                     input_output.append((input,output))
                     out_edges = graph.out_edges(edge[1],data=True)
                     out_edge = None
-                    diff_features = set()
                     for e in out_edges:
                         if e[2]["label"].replace(" ", "") == output:
                             out_edge = e
-                        else:
-                            diff_features = diff_features.union(e[2]["variant"])
+                            break
                     current_state = out_edge[1]
-                    diff_features = diff_features.union(current_features.difference(out_edge[2]["variant"]))
+                    diff_features = current_features.difference(out_edge[2]["variant"])
+                    
                     if len(diff_features) > 0:
                         self._remove_features_graph(graph,diff_features)
-                    current_features = current_features.union(out_edge[2]["variant"])      
+                    current_features = current_features - diff_features
                 except Exception as e:
                     invalid_edges = graph.out_edges(edge[1], data=True)
                     invalid_features = set()
@@ -233,10 +233,10 @@ class Simulator:
                     current_features = current_features.difference(invalid_features)
                     self._remove_features_graph(graph,invalid_features)
                 edges = graph.out_edges(current_state,data=True)
+            
             sul.pre()
             current_state = 'a'
             edges = graph.out_edges(current_state,data=True)
-            print(current_features)
         return current_features
 
 
