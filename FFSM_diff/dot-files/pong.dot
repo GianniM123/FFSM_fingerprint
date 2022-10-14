@@ -1,5 +1,5 @@
 digraph{
-    graph [version="pong"];
+    graph [version="P"];
 
 __start0 [label="" shape="none"];
 __start0 -> "Start Game";

@@ -7,7 +7,7 @@ from base.FFSM.FFSM import FFSM
 from base.fingerprint.passive import trace_fingerprinting
 from base.fingerprint.filehandler import read_traces
 from base.fingerprint.active import Simulator
-
+from base.fingerprint.HDT import HDT
 
 def main():
     active_mode = None
@@ -45,7 +45,8 @@ def main():
         ffsm = FFSM.from_file(ffsm_file)
         fsm = load_automaton_from_file(file,'mealy')
         sul_fsm = MealySUL(fsm)
-        sim = Simulator(ffsm)
+        hdt = HDT(ffsm)
+        sim = Simulator(hdt)
         possible_variant = sim.fingerprint_system(sul_fsm)
 
 

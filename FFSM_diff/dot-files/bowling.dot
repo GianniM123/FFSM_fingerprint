@@ -1,5 +1,5 @@
 digraph{
-    	graph [version="bowling"];
+    	graph [version="W"];
 
 __start0 [label="" shape="none"];
 __start0 -> "Start Game";
