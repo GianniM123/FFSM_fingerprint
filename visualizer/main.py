@@ -23,7 +23,6 @@ def main():
             for label in labels:
                 fin_label = fin_label + label + "  "
                 model.remove_edge(edge[0],edge[1])
-            print(fin_label)
             
             model.add_edge(edge[0],edge[1], label=fin_label)
         nx.drawing.nx_agraph.write_dot(model,"output/" + argv[2])

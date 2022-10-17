@@ -52,7 +52,6 @@ def remove_cycles(graph: nx.MultiDiGraph, current_node : str, seen_nodes : list[
 class Option:
     features: set[str]
     ffsm: FFSM
-    sequence: list[tuple[str,str]]
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Option):
@@ -79,18 +78,17 @@ class HDT:
         graph = nx.MultiDiGraph()
         self.ffsm.reset_to_initial_state()
         seen_states = []
-        root = Option(self.ffsm.features,copy.deepcopy(self.ffsm), [])
+        root = Option(self.ffsm.features,copy.deepcopy(self.ffsm))
         options = [root]
         names = []
         while len(options) > 0:
-            to_discover = options[0]
+            to_discover = options.pop(0)
             id = id_in_list(to_discover,names)
             if id == None:
                 id = fresh_var(len(names))
                 names.append((to_discover, id))
                 graph.add_node(id, label=str(to_discover.features), variant=to_discover.features)
             
-            options.pop(0)
             seen_states.append(to_discover)
             counter = 0
             for input in to_discover.ffsm.alphabet:
@@ -107,13 +105,13 @@ class HDT:
                 for key, value in output_dict.items():
                     node_ffsm = copy.deepcopy(to_discover.ffsm)
                     node_ffsm.step(input, list(value))
-                    node_option = Option(value, node_ffsm,to_discover.sequence + [(input, key)])
+                    node_option = Option(value, node_ffsm)
                     node_id = id_in_list(node_option,names)
                     if node_id == None:
                         node_id = fresh_var(len(names))
                         names.append((node_option,node_id))
                         graph.add_node(node_id, label=str(node_option.features), variant=node_option.features)
-                    if id != node_id and node_option != root :
+                    if id != node_id:
                         graph.add_edge(id + str(counter), node_id, label=key, variant=node_option.features)
                         node_added = True
                     if len(value) == 1:
@@ -125,8 +123,9 @@ class HDT:
                     graph.add_node(id + str(counter), label="")
                     graph.add_edge(id,id + str(counter), label=input)
                 counter = counter + 1
-        nx.drawing.nx_agraph.write_dot(graph,"test.dot")
         self.graph = graph
+        self.is_acyclic = nx.algorithms.is_directed_acyclic_graph(graph)
+        self.root = id_in_list(root,names)
 
     def remove_features_graph(self, features : set[str]):
         to_remove_node = []
@@ -198,6 +197,52 @@ class HDT:
                     return True
         return False
 
+    def step(self, current_state : str, input : str, output : str) -> tuple[str,set[str]]:
+        edges = self.graph.out_edges(current_state,data=True)
+        for edge in edges:
+            if edge[2]["label"] == input:
+                output_edges = self.graph.out_edges(edge[1],data=True)
+                
+                for output_edge in output_edges:
+                    if output_edge[2]["label"].replace(" ", "") == output:
+                        return (output_edge[1],self.graph.nodes[output_edge[1]]["variant"])
+        raise Exception("Not specified")     
+
+    def get_possible_features_input(self, current_state : str, input : str) -> set[str]:
+        edges = self.graph.out_edges(current_state,data=True)
+        variants = set()
+        for edge in edges:
+            if edge[2]["label"] == input:
+                output_edges = self.graph.out_edges(edge[1])
+                for output_edge in output_edges:
+                    variants = variants.union(self.graph.nodes[output_edge[1]]["variant"])
+                break
+        return variants
+                
+
+    def shortest_distinguishing_information(self, current_features : set[str], current_state : str) -> list[str]:
+        distinguishing_nodes = []
+        
+        for node in self.graph.nodes.data():
+            if "variant" in node[1].keys():
+                if current_features != node[1]["variant"]:
+                    distinguishing_nodes.append(node[0])
+        paths = []
+        for node in distinguishing_nodes:
+            paths.append(nx.algorithms.shortest_path(self.graph,current_state,node))
+        if paths == []:
+            return []
+        else:
+            shortest_path = sorted(paths, key=lambda x: len(x))[0]
+            input_list = []
+            i = 0
+            while i < len(shortest_path)-1:
+                input = self.graph.get_edge_data(shortest_path[i], shortest_path[i+1],0)["label"]
+                input_list.append(input)
+                i = i + 2
+            return input_list
+
+    
     def splitting_tree(self, current_features : set[str]):
         # if the input contains a cycle, the HDG (heuristic decision graph) contains a cycle
         # if the input is cycle free, the HDG is cycle free

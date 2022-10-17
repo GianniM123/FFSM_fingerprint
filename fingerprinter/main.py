@@ -48,7 +48,7 @@ def main():
         hdt = HDT(ffsm)
         sim = Simulator(hdt)
         possible_variant = sim.fingerprint_system(sul_fsm)
-
+        print("variant: ", possible_variant)
 
 
 
