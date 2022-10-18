@@ -2,8 +2,8 @@ from base.FFSM.FFSM import FFSM, unify_features
 
 
 
-def trace_fingerprinting(ffsm : FFSM, trace : list[(str,str)]):
-    uncertainty = [(ffsm.initial_state.state_id,list(ffsm.features))]
+def trace_fingerprinting(ffsm : FFSM, trace : list[(str,str)]) -> set[str]:
+    uncertainty = [(ffsm.initial_state.state_id,ffsm.features)]
     # for s in ffsm.states:
         # uncertainty.append((s.state_id, s.features))
     trace_id = 0

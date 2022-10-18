@@ -4,10 +4,10 @@ from aalpy.SULs.AutomataSUL import MealySUL
 import sys
 
 from base.FFSM.FFSM import FFSM
-from base.fingerprint.passive import trace_fingerprinting
-from base.fingerprint.filehandler import read_traces
-from base.fingerprint.active import Simulator
-from base.fingerprint.HDT import HDT
+from base.fingerprint.passive.passive import trace_fingerprinting
+from base.fingerprint.passive.filehandler import read_traces
+from base.fingerprint.active.active import Simulator
+from base.fingerprint.active.HDT import HDT
 
 def main():
     active_mode = None
@@ -39,16 +39,16 @@ def main():
     elif active_mode == False:
         ffsm = FFSM.from_file(ffsm_file)
         traces = read_traces(file)
-        features = trace_fingerprinting(ffsm, traces)
-        print(features)
+        possible_variants = trace_fingerprinting(ffsm, traces)
+        print("variant: ", possible_variants)
     elif active_mode == True:
         ffsm = FFSM.from_file(ffsm_file)
         fsm = load_automaton_from_file(file,'mealy')
         sul_fsm = MealySUL(fsm)
         hdt = HDT(ffsm)
         sim = Simulator(hdt)
-        possible_variant = sim.fingerprint_system(sul_fsm)
-        print("variant: ", possible_variant)
+        possible_variants = sim.fingerprint_system(sul_fsm)
+        print("variant: ", possible_variants)
 
 
 

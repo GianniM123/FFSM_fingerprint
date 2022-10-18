@@ -2,7 +2,7 @@ import networkx as nx
 import random
 
 from aalpy.SULs.AutomataSUL import MealySUL
-from base.fingerprint.HDT import HDT
+from base.fingerprint.active.HDT import HDT
 
 
 class Simulator:

@@ -1,18 +1,12 @@
 import networkx as nx
 
-def unify_features(current_variants : list[str], new_variants : list[str]):
-    if current_variants == []:
+def unify_features(current_variants : set[str], new_variants : set[str]) -> set[str]:
+    if current_variants == set():
         return new_variants
-    elif new_variants == []:
+    elif new_variants == set():
         return current_variants
     
-    equal_variants = []
-    for current_variant in current_variants:
-        for new_variant in new_variants:
-            if current_variant == new_variant:
-                equal_variants.append(current_variant)
-                break
-
+    equal_variants = current_variants.intersection(new_variants)
     return equal_variants
 
 class ConditionalState():
@@ -47,7 +41,7 @@ class FFSM():
     def __init__(self, transitions: list[ConditionalTransition], initial_state: ConditionalState):
         self.transitions = transitions
         self.initial_state = initial_state
-        self.current_states = [(initial_state, [])]
+        self.current_states = [(initial_state, set())]
 
         self.states = []
         self.features = set()
@@ -88,7 +82,7 @@ class FFSM():
             output = output + transition.__str__()
         return output
 
-    def step(self, input : str, features_in : list[str] = []) -> list[(str, list[str])]:
+    def step(self, input : str, features_in : set[str] = set()) -> list[(str, set[str])]:
         new_current_states = []
         outputs = []
         for current_state, feature_config in self.current_states:
@@ -107,7 +101,7 @@ class FFSM():
         return outputs
 
     def reset_to_initial_state(self):
-        self.current_states = [(self.initial_state, list(self.features))]
+        self.current_states = [(self.initial_state, self.features)]
 
     def incoming_transitions_of(self, state : ConditionalState) -> list[ConditionalTransition]:
         incoming_transitions = []

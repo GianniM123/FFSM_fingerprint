@@ -59,8 +59,6 @@ class Option:
             for current_state_1 in self.ffsm.current_states:
                 match_found = False
                 for current_state_2 in other.ffsm.current_states:
-                    current_state_1[1].sort() 
-                    current_state_2[1].sort()
                     if current_state_1[0] == current_state_2[0] and current_state_1[1] == current_state_2[1]: #states are equal
                         match_found = True
                         break
@@ -166,14 +164,13 @@ class HDT:
             return_val = False
             remove_edges = []
             potential_remove_nodes = []
-            input, output  = trace[0]
+            input, output  = trace.pop(0)
             input_edges = self.graph.out_edges(current_state, data=True)
             for input_edge in input_edges:
                 if input_edge[2]["label"] == input:
                     output_edges = self.graph.out_edges(input_edge[1],data=True)
                     for output_edge in output_edges:
                         if output_edge[2]["label"] == output:
-                            trace.pop(0)
                             if self.remove_trace(output_edge[1],trace):
                                 remove_edges.append(input_edge)
                                 remove_edges.append(output_edge)
