@@ -63,7 +63,7 @@ class Option:
                         match_found = True
                         break
                 equal = equal and match_found
-            return self.features == other.features and len(current_state_1) == len(current_state_2) and equal
+            return (self.features == other.features and len(current_state_1) == len(current_state_2) and equal) 
 
 
 class HDT:
@@ -201,7 +201,7 @@ class HDT:
                 output_edges = self.graph.out_edges(edge[1],data=True)
                 
                 for output_edge in output_edges:
-                    if output_edge[2]["label"].replace(" ", "") == output:
+                    if output_edge[2]["label"] == output:
                         return (output_edge[1],self.graph.nodes[output_edge[1]]["variant"])
         raise Exception("Not specified")     
 
@@ -224,9 +224,13 @@ class HDT:
             if "variant" in node[1].keys():
                 if current_features != node[1]["variant"]:
                     distinguishing_nodes.append(node[0])
+
         paths = []
         for node in distinguishing_nodes:
-            paths.append(nx.algorithms.shortest_path(self.graph,current_state,node))
+            try:
+                paths.append(nx.algorithms.shortest_path(self.graph,current_state,node))
+            except:
+                pass
         if paths == []:
             return []
         else:

@@ -27,7 +27,7 @@ class Simulator:
                     out_edges = self.hdt.graph.out_edges(edge[1],data=True)
                     out_edge = None
                     for e in out_edges:
-                        if e[2]["label"].replace(" ", "") == str(output):
+                        if e[2]["label"] == str(output):
                             out_edge = e
                             break
                     current_state = out_edge[1]
@@ -60,7 +60,8 @@ class Simulator:
         initial_state = current_state
         self.total_queries = []
         self.number_of_reset = 0
-        while True:
+        stop = False
+        while not stop:
             inputs = self.hdt.shortest_distinguishing_information(current_features, current_state)
             while inputs != []:
                 for input in inputs:
@@ -70,15 +71,21 @@ class Simulator:
                         current_state, features = self.hdt.step(current_state,input,str(output))
                         invalid_features = current_features.difference(features)
                         current_features = features
+                        if(len(current_features)) <= 1:
+                            stop = True
+                            break
                         if len(invalid_features) > 0:
                             self.hdt.remove_features_graph(invalid_features)
                     except Exception as e:
                         invalid_features = self.hdt.get_possible_features_input(current_state,input)
                         current_features = current_features.difference(invalid_features)
+                        if(len(current_features)) <= 1:
+                            stop = True
+                            break
                         self.hdt.remove_features_graph(invalid_features)
                 inputs = self.hdt.shortest_distinguishing_information(current_features, current_state)
 
-            if self.hdt.can_detect_change(current_features):
+            if self.hdt.can_detect_change(current_features) and not stop:
                 self.number_of_reset = self.number_of_reset + 1
                 sul.pre()
                 current_state = initial_state

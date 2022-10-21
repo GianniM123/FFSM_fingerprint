@@ -73,7 +73,7 @@ class FFSM():
                 continue
             in_output = transition[2]["label"].split("/")
             features = transition[2]["feature"].split("|")
-            transitions.append(ConditionalTransition(states[transition[0]], states[transition[1]], in_output[0], in_output[1],features))
+            transitions.append(ConditionalTransition(states[transition[0]], states[transition[1]], in_output[0].replace(" ", ""), in_output[1].replace(" ", ""),features))
         return FFSM(transitions, initial_state)
         
     def __str__(self) -> str:
