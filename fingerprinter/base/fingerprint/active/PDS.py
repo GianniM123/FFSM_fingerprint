@@ -54,6 +54,7 @@ class PDS:
         self.ffsm.reset_to_initial_state()
         seen_states = []
         root = Option(set(frozenset(self.ffsm.features)),copy.deepcopy(self.ffsm), [(self.ffsm.features, [])])
+        nr_features = len(self.ffsm.features)
         options = [root]
         names = []
         while len(options) > 0:
@@ -62,43 +63,50 @@ class PDS:
             if id == None:
                 id = fresh_var(len(names))
                 names.append((to_discover, id))
-                graph.add_node(id, label=str(to_discover.features), variant=to_discover.features)
+                graph.add_node(id, label=to_discover.features)
             
             seen_states.append(to_discover)
             for input in to_discover.ffsm.alphabet:
-                new_ffsm = copy.deepcopy(to_discover.ffsm)
-                outputs = new_ffsm.step(input)
-                output_dict : dict[str, set] = {}
-                
-                for out, features in outputs:
-                    if out not in output_dict.keys():
-                        output_dict[out] = set(features)
-                    else:
-                        output_dict[out] = output_dict[out].union(set(features))
+                try:
+                    new_ffsm = copy.deepcopy(to_discover.ffsm)
+                    outputs = new_ffsm.step(input)
+                    output_dict : dict[str, set] = {}
+                    
+                    count_features = 0
+                    for out, features in outputs:
+                        count_features = count_features + len(features)
+                        if out not in output_dict.keys():
+                            output_dict[out] = set(features)
+                            
+                        else:
+                            output_dict[out] = output_dict[out].union(set(features))
+                    if count_features != nr_features:
+                        continue
+                    new_option = Option(set(),new_ffsm, []) 
+                    for output, new_split_features in output_dict.items():
+                        for splitted_features, sequence in to_discover.sequence:
+                            features_intersection = new_split_features.intersection(splitted_features)
+                            if len(features_intersection) > 0:
+                                new_option.features.add(frozenset(features_intersection))
+                                new_option.sequence.append((features_intersection, sequence + [(input,output)]))
 
-                new_option = Option(set(),new_ffsm, []) 
-                for output, new_split_features in output_dict.items():
-                    for splitted_features, sequence in to_discover.sequence:
-                        features_intersection = new_split_features.intersection(splitted_features)
-                        if len(features_intersection) > 0:
-                            new_option.features.add(frozenset(features_intersection))
-                            new_option.sequence.append((features_intersection, sequence + [(input,output)]))
-
-                node_id = id_in_list(new_option,names)
-                if node_id is None:
-                    node_id = fresh_var(len(names))
-                    names.append((new_option, node_id))
-                    graph.add_node(node_id, label=new_option.features, variant=new_option.features)
-                    graph.add_edge(id,node_id, label=input)
-                    options.append(new_option)
-                
-                    stop = len(new_option.features) == len(self.ffsm.features)
-                    for f in new_option.features:
-                        stop = stop and len(f) == 1 
-                    if stop:
-                        options = []
-                        self.pds = new_option.sequence
-                        break
+                    node_id = id_in_list(new_option,names)
+                    if node_id is None:
+                        node_id = fresh_var(len(names))
+                        names.append((new_option, node_id))
+                        graph.add_node(node_id, label=new_option.features)
+                        graph.add_edge(id,node_id, label=input)
+                        options.append(new_option)
+                    
+                        stop = True
+                        for f in new_option.features:
+                            stop = stop and len(f) == 1 
+                        if stop:
+                            options = []
+                            self.pds = new_option.sequence
+                            break
+                except:
+                    pass
 
         self.graph = graph
         nx.drawing.nx_agraph.write_dot(self.graph,"test.dot")
