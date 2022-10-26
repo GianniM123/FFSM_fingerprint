@@ -109,4 +109,4 @@ class CPDS:
                     pass
 
         self.graph = graph
-        nx.drawing.nx_agraph.write_dot(self.graph,"test.dot")
+        nx.drawing.nx_agraph.write_dot(self.graph,"test-cpds.dot")

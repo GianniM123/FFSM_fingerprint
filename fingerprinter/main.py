@@ -7,7 +7,7 @@ from base.FFSM.FFSM import FFSM
 from base.fingerprint.passive.passive import trace_fingerprinting
 from base.fingerprint.passive.filehandler import read_traces
 from base.fingerprint.active.active import Simulator
-from base.fingerprint.active.CPDS import CPDS
+from base.fingerprint.active.CADS import CADS
 
 def main():
     active_mode = None
@@ -45,10 +45,10 @@ def main():
         ffsm = FFSM.from_file(ffsm_file)
         fsm = load_automaton_from_file(file,'mealy')
         sul_fsm = MealySUL(fsm)
-        pds = CPDS(ffsm)
-        sim = Simulator(pds)
-        possible_variants = sim.fingerprint_system(sul_fsm)
-        print("variant: ", possible_variants)
+        pds = CADS(ffsm)
+        # sim = Simulator(pds)
+        # possible_variants = sim.fingerprint_system(sul_fsm)
+        # print("variant: ", possible_variants)
 
 
 
