@@ -52,7 +52,7 @@ class CADS:
         self._calculate_graph()
     
     def _calculate_graph(self) -> None:
-        graph = nx.MultiGraph()
+        graph = nx.DiGraph()
         self.ffsm.reset_to_initial_state()
         seen_states = []
         root = Option(self.ffsm.features,copy.deepcopy(self.ffsm), [], None)
@@ -66,19 +66,34 @@ class CADS:
             if id == None:
                 id = fresh_var(len(names))
                 names.append((to_discover, id))
-                graph.add_node(id, label=str(to_discover.features))
+                graph.add_node(id, label=str(to_discover.features), inputs={})
+                for input, output in to_discover.sequence:
+                    graph.nodes[id]["inputs"][input] = output
+            else:
+                graph.nodes[id]["inputs"][to_discover.sequence[-1][0]] = to_discover.sequence[-1][1]
             
             if to_discover.pre != None:
                 node_id = id_in_list(to_discover.pre,names)
                 if node_id is None:
                     node_id = fresh_var(len(names))
                     names.append((to_discover.pre, node_id))
-                    graph.add_node(node_id, label=str(to_discover.pre.features))
-                graph.add_edge(node_id,id, label=to_discover.sequence[-1][0] + "/" + to_discover.sequence[-1][1])
+                    graph.add_node(node_id, label=str(to_discover.pre.features), inputs={})
+                
+                if graph.out_degree(node_id) >= 1:
+                    edges = copy.deepcopy(graph.out_edges(node_id,data=True))
+                    to_remove = []
+                    for e in edges:
+                        if to_discover.sequence[-1][0] in graph.nodes[e[1]]["inputs"].keys():
+                            graph.add_edge(e[0],e[1], label=to_discover.sequence[-1][0] + "/" + graph.nodes[e[1]]["inputs"][to_discover.sequence[-1][0]], input=to_discover.sequence[-1][0] )
+                        else:
+                            to_remove.append(e)
+                    for e in to_remove:
+                        graph.remove_edge(e[0],e[1])
+                
+                graph.add_edge(node_id,id, label=to_discover.sequence[-1][0] + "/" + to_discover.sequence[-1][1], input=to_discover.sequence[-1][0])
 
 
             seen_states.append(to_discover)
-            print(self._best_input(to_discover.ffsm))
             for input in self._best_input(to_discover.ffsm):
                 try:
                     new_ffsm = copy.deepcopy(to_discover.ffsm)
@@ -94,33 +109,40 @@ class CADS:
                             output_dict[out] = output_dict[out].union(set(features))
                     if counter != len(to_discover.features):
                         continue
+                    done = False
                     for output, features  in output_dict.items():
                         step_ffsm = copy.deepcopy(to_discover.ffsm)
                         step_ffsm.step(input,features)
                         new_option = Option(features,step_ffsm, to_discover.sequence + [(input,output)], to_discover)
                         
                         if len(new_option.features) == 1:
+                            done = True
                             seen_states.append(new_option)
                             node_id = id_in_list(new_option,names)
                             if node_id is None:
                                 node_id = fresh_var(len(names))
                                 names.append((new_option, node_id))
-                                graph.add_node(node_id, label=str(new_option.features))
-                            graph.add_edge(id,node_id, label=input + "/" + output)
+                                graph.add_node(node_id, label=str(new_option.features), inputs={input:output})
+                                graph.add_edge(id,node_id, label=input + "/" + output, input=input)
+                            else:
+                                graph.nodes[node_id]["inputs"][input] = output
+
                             filtered = list(filter(lambda x: len(x.features) == 1, seen_states))
                             just_features = [list(x.features)[0] for x in filtered]
-                            done = True
+                            
                             for f1 in self.ffsm.features:
                                 if f1 not in just_features:
                                     done = False
                                     break
                             if done:
-                                for i in filtered:
-                                    print(i.features, " ", i.sequence)
+                                for x in filtered:
+                                    print(x.features, " ", x.sequence)
                                 options = []
                                 break
                         elif new_option not in seen_states and new_option not in options:
                             options.append(new_option)
+                    if done:
+                        break
 
                         
                         
