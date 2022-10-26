@@ -41,8 +41,7 @@ class FFSM():
     def __init__(self, transitions: list[ConditionalTransition], initial_state: ConditionalState):
         self.transitions = transitions
         self.initial_state = initial_state
-        self.current_states = [(initial_state, set())]
-
+        
         self.states = []
         self.features = set()
         self.alphabet = set()
@@ -52,7 +51,9 @@ class FFSM():
             if transition.to_state not in self.states:
                 self.states.append(transition.to_state)  
             self.features = self.features.union(set(transition.features))
-            self.alphabet.add(transition.input)      
+            self.alphabet.add(transition.input)
+        
+        self.reset_to_initial_state()      
 
     @classmethod
     def from_file(self, file: str):

@@ -25,7 +25,7 @@ def id_in_list(id, list):
 
 @dataclass
 class Option:
-    features: set[frozenset[str]]
+    features: list[set[str]]
     ffsm: FFSM
     sequence : list[tuple[set[str],list[tuple[str,str]]]]
 
@@ -42,7 +42,7 @@ class Option:
             return (self.features == other.features and equal) 
 
 
-class PDS:
+class CPDS:
 
     def __init__(self, ffsm : FFSM) -> None:
         self.ffsm = ffsm
@@ -50,10 +50,10 @@ class PDS:
         self._calculate_graph()
     
     def _calculate_graph(self) -> None:
-        graph = nx.DiGraph()
+        graph = nx.Graph()
         self.ffsm.reset_to_initial_state()
         seen_states = []
-        root = Option(set(frozenset(self.ffsm.features)),copy.deepcopy(self.ffsm), [(self.ffsm.features, [])])
+        root = Option(self.ffsm.features,copy.deepcopy(self.ffsm), [(self.ffsm.features, [])])
         nr_features = len(self.ffsm.features)
         options = [root]
         names = []
@@ -82,12 +82,12 @@ class PDS:
                             output_dict[out] = output_dict[out].union(set(features))
                     if count_features != nr_features:
                         continue
-                    new_option = Option(set(),new_ffsm, []) 
+                    new_option = Option([],new_ffsm, []) 
                     for output, new_split_features in output_dict.items():
                         for splitted_features, sequence in to_discover.sequence:
                             features_intersection = new_split_features.intersection(splitted_features)
                             if len(features_intersection) > 0:
-                                new_option.features.add(frozenset(features_intersection))
+                                new_option.features.append(features_intersection)
                                 new_option.sequence.append((features_intersection, sequence + [(input,output)]))
 
                     node_id = id_in_list(new_option,names)

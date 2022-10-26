@@ -1,12 +1,12 @@
 from copy import deepcopy
 
 from aalpy.SULs.AutomataSUL import MealySUL
-from base.fingerprint.active.PDS import PDS
+from base.fingerprint.active.CPDS import CPDS
 
 
 class Simulator:
     
-    def __init__(self, pds : PDS) -> None:
+    def __init__(self, pds : CPDS) -> None:
         self.pds = pds
 
       
