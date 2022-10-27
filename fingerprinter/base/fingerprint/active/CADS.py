@@ -121,6 +121,11 @@ class CADS:
                         elif new_option not in seen_states and new_option not in options:
                             options.append(new_option)
                     if done:
+                        self.ads_found = True
+                        self.graph = graph 
+
+                        self._clean_up_graph()
+
                         for node in graph.nodes.data():
                             input_dict = {}
                             for edge in graph.out_edges(node[0], data=True):
@@ -136,17 +141,9 @@ class CADS:
                                     for edge in all_edges:
                                         if input == edge[3]["label"].split("/")[0]:
                                             graph.remove_edge(edge[0],edge[1],key=edge[2])
-                        
-                        did_remove = True
-                        while did_remove == True:
-                            did_remove = False
-                            all_nodes = copy.deepcopy(graph.nodes.data())
-                            for node in all_nodes:
-                                if graph.degree(node[0]) == 0 or graph.out_degree(node[0]) == 0 and len(set(node[1]["label"])) != 1:
-                                    graph.remove_node(node[0])
-                                    did_remove = True
-                        
-                        self.ads_found = True
+
+                        self._clean_up_graph()                    
+
                         break
 
                         
@@ -155,7 +152,7 @@ class CADS:
                     print(e)
                     pass
 
-        self.graph = graph
+        
         nx.drawing.nx_agraph.write_dot(self.graph,"test.dot")
 
     def _best_input(self, ffsm : FFSM):
@@ -192,6 +189,15 @@ class CADS:
                 rank_best_inputs.insert(0,input) 
         return rank_best_inputs        
 
+    def _clean_up_graph(self):
+        did_remove = True
+        while did_remove == True:
+            did_remove = False
+            all_nodes = copy.deepcopy(self.graph.nodes.data())
+            for node in all_nodes:
+                if self.graph.degree(node[0]) == 0 or self.graph.out_degree(node[0]) == 0 and len(set(node[1]["label"])) != 1:
+                    self.graph.remove_node(node[0])
+                    did_remove = True
 
         
 
