@@ -52,7 +52,6 @@ class FFSM():
                 self.states.append(transition.to_state)  
             self.features = self.features.union(set(transition.features))
             self.alphabet.add(transition.input)
-        
         self.reset_to_initial_state()      
 
     @classmethod

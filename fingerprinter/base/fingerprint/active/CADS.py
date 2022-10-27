@@ -48,11 +48,11 @@ class CADS:
 
     def __init__(self, ffsm : FFSM) -> None:
         self.ffsm = ffsm
-        self.ads = None
+        self.ads_found = False
         self._calculate_graph()
     
     def _calculate_graph(self) -> None:
-        graph = nx.DiGraph()
+        graph = nx.MultiDiGraph()
         self.ffsm.reset_to_initial_state()
         seen_states = []
         root = Option(self.ffsm.features,copy.deepcopy(self.ffsm), [], None)
@@ -66,32 +66,15 @@ class CADS:
             if id == None:
                 id = fresh_var(len(names))
                 names.append((to_discover, id))
-                graph.add_node(id, label=str(to_discover.features), inputs={})
-                for input, output in to_discover.sequence:
-                    graph.nodes[id]["inputs"][input] = output
-            else:
-                graph.nodes[id]["inputs"][to_discover.sequence[-1][0]] = to_discover.sequence[-1][1]
+                graph.add_node(id, label=to_discover.features)
             
             if to_discover.pre != None:
                 node_id = id_in_list(to_discover.pre,names)
                 if node_id is None:
                     node_id = fresh_var(len(names))
                     names.append((to_discover.pre, node_id))
-                    graph.add_node(node_id, label=str(to_discover.pre.features), inputs={})
-                
-                if graph.out_degree(node_id) >= 1:
-                    edges = copy.deepcopy(graph.out_edges(node_id,data=True))
-                    to_remove = []
-                    for e in edges:
-                        if to_discover.sequence[-1][0] in graph.nodes[e[1]]["inputs"].keys():
-                            graph.add_edge(e[0],e[1], label=to_discover.sequence[-1][0] + "/" + graph.nodes[e[1]]["inputs"][to_discover.sequence[-1][0]], input=to_discover.sequence[-1][0] )
-                        else:
-                            to_remove.append(e)
-                    for e in to_remove:
-                        graph.remove_edge(e[0],e[1])
-                
-                graph.add_edge(node_id,id, label=to_discover.sequence[-1][0] + "/" + to_discover.sequence[-1][1], input=to_discover.sequence[-1][0])
-
+                    graph.add_node(node_id, label=to_discover.pre.features)
+                graph.add_edge(node_id,id, label=to_discover.sequence[-1][0] + "/" + to_discover.sequence[-1][1])
 
             seen_states.append(to_discover)
             for input in self._best_input(to_discover.ffsm):
@@ -114,19 +97,17 @@ class CADS:
                         step_ffsm = copy.deepcopy(to_discover.ffsm)
                         step_ffsm.step(input,features)
                         new_option = Option(features,step_ffsm, to_discover.sequence + [(input,output)], to_discover)
-                        
+     
                         if len(new_option.features) == 1:
                             done = True
-                            seen_states.append(new_option)
+                            seen_states.append(new_option)    
+
                             node_id = id_in_list(new_option,names)
                             if node_id is None:
                                 node_id = fresh_var(len(names))
                                 names.append((new_option, node_id))
-                                graph.add_node(node_id, label=str(new_option.features), inputs={input:output})
-                                graph.add_edge(id,node_id, label=input + "/" + output, input=input)
-                            else:
-                                graph.nodes[node_id]["inputs"][input] = output
-
+                                graph.add_node(node_id, label=new_option.features)
+                            graph.add_edge(id,node_id, label=input + "/" + output)
                             filtered = list(filter(lambda x: len(x.features) == 1, seen_states))
                             just_features = [list(x.features)[0] for x in filtered]
                             
@@ -135,13 +116,37 @@ class CADS:
                                     done = False
                                     break
                             if done:
-                                for x in filtered:
-                                    print(x.features, " ", x.sequence)
                                 options = []
-                                break
+                                
                         elif new_option not in seen_states and new_option not in options:
                             options.append(new_option)
                     if done:
+                        for node in graph.nodes.data():
+                            input_dict = {}
+                            for edge in graph.out_edges(node[0], data=True):
+                                input = edge[2]["label"].split("/")[0]
+                                if input not in input_dict.keys():
+                                    input_dict[input] = graph.nodes[edge[1]]["label"]
+                                else:
+                                    input_dict[input] = input_dict[input].union(graph.nodes[edge[1]]["label"])
+                            
+                            all_edges = copy.deepcopy(graph.out_edges(node[0], keys=True, data=True))
+                            for input, feature_set in input_dict.items():
+                                if feature_set != node[1]["label"]:
+                                    for edge in all_edges:
+                                        if input == edge[3]["label"].split("/")[0]:
+                                            graph.remove_edge(edge[0],edge[1],key=edge[2])
+                        
+                        did_remove = True
+                        while did_remove == True:
+                            did_remove = False
+                            all_nodes = copy.deepcopy(graph.nodes.data())
+                            for node in all_nodes:
+                                if graph.degree(node[0]) == 0 or graph.out_degree(node[0]) == 0 and len(set(node[1]["label"])) != 1:
+                                    graph.remove_node(node[0])
+                                    did_remove = True
+                        
+                        self.ads_found = True
                         break
 
                         
@@ -169,6 +174,7 @@ class CADS:
                 input_edges_dict[edge.input] = input_edges_dict[edge.input] + [(edge.output, edge.to_state)]
 
         rank_best_inputs = []
+        counter = 0
         for input, edge_infos in input_edges_dict.items():
             outputs = []
             states = []
@@ -179,8 +185,9 @@ class CADS:
                     states.append(state)
             if len(outputs) > 1:
                 rank_best_inputs.append(input)
+                counter = counter + 1
             elif len(states) > 1 and len(rank_best_inputs) >= 1:
-                rank_best_inputs.insert(len(rank_best_inputs)-1,input)
+                rank_best_inputs.insert(len(rank_best_inputs)-counter,input)
             else:
                 rank_best_inputs.insert(0,input) 
         return rank_best_inputs        
