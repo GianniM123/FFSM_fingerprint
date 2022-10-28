@@ -1,0 +1,85 @@
+digraph "" {
+	node [label="\N"];
+	__start0	[feature=True,
+		label="__start0  True",
+		shape=none];
+	b	[feature=True,
+		label="b  True"];
+	__start0 -> b	[key=0];
+	b -> b	[key=0,
+		label="(PublishQoS0Dup / ConnectionClosed ActiveMQ|emqtt|hbmqtt|mosquito|VerneMQ)  (PublishQoSMinus1 / ConnectionClosed ActiveMQ|emqtt|\
+hbmqtt|mosquito|VerneMQ)  (PublishWildCard / ConnectionClosed ActiveMQ|emqtt|hbmqtt|mosquito|VerneMQ)  (SubscribeWildMatch / ConnectionClosed \
+ActiveMQ|emqtt|hbmqtt|mosquito|VerneMQ)  (UnSubscribeWildMatch / ConnectionClosed ActiveMQ|emqtt|hbmqtt|mosquito|VerneMQ)  (Subscribe / \
+ConnectionClosed ActiveMQ|emqtt|hbmqtt|mosquito|VerneMQ)  (SubscribeMinus1 / ConnectionClosed ActiveMQ|emqtt|hbmqtt|mosquito|VerneMQ)  (\
+UnSubScribe / ConnectionClosed ActiveMQ|emqtt|hbmqtt|mosquito|VerneMQ)  (Disconnect / ConnectionClosed ActiveMQ|emqtt|hbmqtt|mosquito|\
+VerneMQ)  (ConnectNonClean / ConnectionClosed__ConnAckPacket(false,2) ActiveMQ|hbmqtt|mosquito|VerneMQ)  "];
+	c	[feature="ActiveMQ|mosquito|VerneMQ",
+		label="c  ActiveMQ|mosquito|VerneMQ"];
+	b -> c	[key=0,
+		label="(Connect / ConnAckPacket(false,0) mosquito|VerneMQ)  "];
+	e	[feature="ActiveMQ|emqtt|hbmqtt",
+		label="e  ActiveMQ|emqtt|hbmqtt"];
+	b -> e	[key=0,
+		label="(Connect / ConnAckPacket(false,0) ActiveMQ|emqtt|hbmqtt)  (ConnectNonClean / ConnAckPacket(false,0) emqtt)  "];
+	c -> b	[key=0,
+		label="(Connect / ConnectionClosed ActiveMQ|mosquito|VerneMQ)  (ConnectNonClean / ConnectionClosed ActiveMQ|mosquito|VerneMQ)  (PublishQoSMinus1 / \
+ConnectionClosed ActiveMQ|mosquito|VerneMQ)  (SubscribeMinus1 / ConnectionClosed ActiveMQ|mosquito|VerneMQ)  (Disconnect / ConnectionClosed \
+ActiveMQ|mosquito|VerneMQ)  (PublishWildCard / ConnectionClosed mosquito|VerneMQ)  "];
+	c -> c	[key=0,
+		label="(PublishQoS0Dup / Empty ActiveMQ|mosquito|VerneMQ)  (SubscribeWildMatch / SubAck ActiveMQ|mosquito|VerneMQ)  (UnSubScribe / UnSubAck \
+ActiveMQ|mosquito|VerneMQ)  (UnSubscribeWildMatch / UnSubAck mosquito|VerneMQ)  (PublishWildCard / Pub(wild/+,match) ActiveMQ)  "];
+	c -> e	[key=0,
+		label="(UnSubscribeWildMatch / UnSubAck ActiveMQ)  "];
+	d	[feature="ActiveMQ|emqtt|mosquito|VerneMQ",
+		label="d  ActiveMQ|emqtt|mosquito|VerneMQ"];
+	c -> d	[key=0,
+		label="(Subscribe / SubAck mosquito|VerneMQ)  "];
+	f	[feature=ActiveMQ,
+		label="f  ActiveMQ"];
+	c -> f	[key=0,
+		label="(Subscribe / SubAck ActiveMQ)  "];
+	e -> b	[key=0,
+		label="(Disconnect / ConnectionClosed ActiveMQ|emqtt|hbmqtt)  (Connect / ConnectionClosed ActiveMQ|emqtt)  (ConnectNonClean / ConnectionClosed \
+ActiveMQ|emqtt)  (PublishQoSMinus1 / ConnectionClosed ActiveMQ|emqtt)  (SubscribeMinus1 / ConnectionClosed ActiveMQ|emqtt)  (PublishWildCard / \
+ConnectionClosed emqtt)  "];
+	e -> c	[key=0,
+		label="(SubscribeWildMatch / SubAck ActiveMQ)  "];
+	e -> e	[key=0,
+		label="(PublishQoS0Dup / Empty ActiveMQ|emqtt|hbmqtt)  (UnSubscribeWildMatch / UnSubAck ActiveMQ|emqtt|hbmqtt)  (UnSubScribe / UnSubAck \
+ActiveMQ|emqtt|hbmqtt)  (SubscribeWildMatch / SubAck emqtt|hbmqtt)  (Connect / Empty hbmqtt)  (ConnectNonClean / Empty hbmqtt)  (\
+PublishQoSMinus1 / Empty hbmqtt)  (Subscribe / SubAck hbmqtt)  (SubscribeMinus1 / SubAck hbmqtt)  (PublishWildCard / Empty ActiveMQ)  "];
+	e -> d	[key=0,
+		label="(Subscribe / SubAck ActiveMQ|emqtt)  "];
+	g	[feature=hbmqtt,
+		label="g  hbmqtt"];
+	e -> g	[key=0,
+		label="(PublishWildCard / Empty hbmqtt)  "];
+	d -> b	[key=0,
+		label="(Connect / ConnectionClosed ActiveMQ|emqtt|mosquito|VerneMQ)  (ConnectNonClean / ConnectionClosed ActiveMQ|emqtt|mosquito|VerneMQ)  (\
+PublishQoSMinus1 / ConnectionClosed ActiveMQ|emqtt|mosquito|VerneMQ)  (SubscribeMinus1 / ConnectionClosed ActiveMQ|emqtt|mosquito|\
+VerneMQ)  (Disconnect / ConnectionClosed ActiveMQ|emqtt|mosquito|VerneMQ)  (PublishWildCard / ConnectionClosed emqtt|mosquito|VerneMQ)  "];
+	d -> c	[key=0,
+		label="(UnSubScribe / UnSubAck mosquito|VerneMQ)  "];
+	d -> e	[key=0,
+		label="(UnSubScribe / UnSubAck ActiveMQ|emqtt)  "];
+	d -> d	[key=0,
+		label="(PublishQoS0Dup / Pub(my_topic,messageQos0) ActiveMQ|emqtt|mosquito|VerneMQ)  (UnSubscribeWildMatch / UnSubAck ActiveMQ|emqtt|mosquito|\
+VerneMQ)  (Subscribe / SubAck ActiveMQ|emqtt|mosquito|VerneMQ)  (SubscribeWildMatch / SubAck emqtt|mosquito|VerneMQ)  (PublishWildCard / \
+Empty ActiveMQ)  "];
+	d -> f	[key=0,
+		label="(SubscribeWildMatch / SubAck ActiveMQ)  "];
+	f -> b	[key=0,
+		label="(Connect / ConnectionClosed ActiveMQ)  (ConnectNonClean / ConnectionClosed ActiveMQ)  (PublishQoSMinus1 / ConnectionClosed ActiveMQ)  (\
+SubscribeMinus1 / ConnectionClosed ActiveMQ)  (Disconnect / ConnectionClosed ActiveMQ)  "];
+	f -> c	[key=0,
+		label="(UnSubScribe / UnSubAck ActiveMQ)  "];
+	f -> d	[key=0,
+		label="(UnSubscribeWildMatch / UnSubAck ActiveMQ)  "];
+	f -> f	[key=0,
+		label="(PublishQoS0Dup / Pub(my_topic,messageQos0) ActiveMQ)  (PublishWildCard / Pub(wild/+,match) ActiveMQ)  (SubscribeWildMatch / SubAck \
+ActiveMQ)  (Subscribe / SubAck ActiveMQ)  "];
+	g -> g	[key=0,
+		label="(Connect / Empty hbmqtt)  (ConnectNonClean / Empty hbmqtt)  (PublishQoS0Dup / Empty hbmqtt)  (PublishQoSMinus1 / Empty hbmqtt)  (\
+PublishWildCard / Empty hbmqtt)  (SubscribeWildMatch / Empty hbmqtt)  (UnSubscribeWildMatch / Empty hbmqtt)  (Subscribe / Empty \
+hbmqtt)  (SubscribeMinus1 / Empty hbmqtt)  (UnSubScribe / Empty hbmqtt)  (Disconnect / Empty hbmqtt)  "];
+}
