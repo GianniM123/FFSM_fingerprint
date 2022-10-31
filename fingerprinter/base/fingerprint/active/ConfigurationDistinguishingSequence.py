@@ -22,6 +22,7 @@ class ConfigurationDistinguishingSequence(ABC):
         self.ffsm : FFSM = ffsm
         self.exists : bool = False
         self.configuration_ss : nx.MultiDiGraph = None
+        self.root = None
         self._calculate_graph()
         print(self.exists)
         if self.exists:

@@ -1,31 +1,29 @@
 from copy import deepcopy
 
 from aalpy.SULs.AutomataSUL import MealySUL
-from base.fingerprint.active.CPDS import CPDS
+from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence
 
 
 class Simulator:
     
-    def __init__(self, pds : CPDS) -> None:
-        self.pds = pds
+    def __init__(self, ds : ConfigurationDistinguishingSequence) -> None:
+        self.ds = ds
 
       
     def _pds_fingerprint(self, sul : MealySUL) -> set[str]:
         self.total_queries = []
-        if self.pds.pds is not None:
-            pds = deepcopy(self.pds.pds) #list[tuple[set[str],list[tuple[str,str]]]]
-            for input, _ in self.pds.pds[0][1]:
+        if self.ds.exists == True:
+            current_node = self.ds.root
+            while self.ds.seperating_sequence.out_degree(current_node) > 0:
+                input = self.ds.seperating_sequence.nodes[current_node]["label"]
                 output = sul.step(input)
                 self.total_queries.append((input,output))
-                to_remove = []
-                for i in range(0,len(pds)):
-                    iin, out = pds[i][1].pop(0)
-                    if input != iin or out != str(output):
-                        to_remove.append(pds[i])
-                for i in to_remove:
-                    pds.remove(i)
-            return pds[0][0]
 
+                for edge in self.ds.seperating_sequence.out_edges(current_node, data=True):
+                    if edge[2]["label"] == output:
+                        current_node = edge[1]
+
+            return self.ds.seperating_sequence.nodes[current_node]["label"]
         else:
             return set()
 

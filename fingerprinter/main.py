@@ -46,10 +46,11 @@ def main():
         ffsm = FFSM.from_file(ffsm_file)
         fsm = load_automaton_from_file(file,'mealy')
         sul_fsm = MealySUL(fsm)
-        pds = CADS(ffsm)
-        # sim = Simulator(pds)
-        # possible_variants = sim.fingerprint_system(sul_fsm)
-        # print("variant: ", possible_variants)
+        # ds = CADS(ffsm)
+        ds = CPDS(ffsm)
+        sim = Simulator(ds)
+        possible_variants = sim.fingerprint_system(sul_fsm)
+        print("variant: ", possible_variants)
 
 
 

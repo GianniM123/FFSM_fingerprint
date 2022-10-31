@@ -64,7 +64,7 @@ class CADS(ConfigurationDistinguishingSequence):
                 self.graph.add_edge(node_id,id, label=to_discover.sequence[-1][0] + "/" + to_discover.sequence[-1][1])
 
             seen_states.append(to_discover)
-            for input in self.ffsm.alphabet:#self._best_input(to_discover.ffsm):
+            for input in self._best_input(to_discover.ffsm):
                 try:
                     new_ffsm = copy.deepcopy(to_discover.ffsm)
                     outputs = new_ffsm.step(input)
@@ -84,6 +84,7 @@ class CADS(ConfigurationDistinguishingSequence):
                         step_ffsm.step(input,features)
                         new_option = Option(features,step_ffsm, to_discover.sequence + [(input,output)], to_discover)
      
+
                         if len(new_option.features) == 1:
                             seen_states.append(new_option)    
 

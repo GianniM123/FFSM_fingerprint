@@ -92,11 +92,11 @@ class CPDS(ConfigurationDistinguishingSequence):
                             self.exists = True
                             
                             self.configuration_ss = nx.MultiDiGraph()
-                            root = "a"
-                            self.configuration_ss.add_node(root, label=self.ffsm.features)
+                            self.root = "a"
+                            self.configuration_ss.add_node(self.root, label=self.ffsm.features)
                             count = 0
                             for configuration, sequence in new_option.sequence:
-                                current_node = root
+                                current_node = self.root
                                 for input, output in sequence:
                                     label = input + "/" + output
                                     to_node = None
@@ -108,9 +108,9 @@ class CPDS(ConfigurationDistinguishingSequence):
                                         self.configuration_ss.nodes[to_node]["label"] = self.configuration_ss.nodes[to_node]["label"].union(configuration)
                                         current_node = to_node
                                     else:
-                                        self.configuration_ss.add_node(root + str(count),label=configuration)
-                                        self.configuration_ss.add_edge(current_node, root + str(count), label=label)
-                                        current_node = root + str(count)
+                                        self.configuration_ss.add_node(self.root + str(count),label=configuration)
+                                        self.configuration_ss.add_edge(current_node, self.root + str(count), label=label)
+                                        current_node = self.root + str(count)
                                         count = count + 1
                             
                             break
