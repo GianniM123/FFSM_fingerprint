@@ -8,6 +8,7 @@ from base.fingerprint.passive.passive import trace_fingerprinting
 from base.fingerprint.passive.filehandler import read_traces
 from base.fingerprint.active.active import Simulator
 from base.fingerprint.active.CADS import CADS
+from base.fingerprint.active.CPDS import CPDS
 
 def main():
     active_mode = None

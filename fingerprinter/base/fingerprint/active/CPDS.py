@@ -5,22 +5,8 @@ import string
 import networkx as nx
 
 from base.FFSM.FFSM import FFSM
+from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence, id_in_list, fresh_var
 
-
-def fresh_var(index : int):
-    '''Generate a fresh variable on basis of the given index'''
-    letters = string.ascii_lowercase
-    value = 1
-    if index >= len(letters):
-        value = int(index / len(letters)) + 1
-        index = index % len(letters)
-    return letters[index] * value
-
-def id_in_list(id, list):
-    for ids in list:
-        if ids[0] == id:
-            return ids[1]
-    return None
 
 
 @dataclass
@@ -39,21 +25,21 @@ class Option:
                         match_found = True
                         break
                 equal = equal and match_found
+            self.features.sort()
+            other.features.sort()
             return (self.features == other.features and equal) 
 
 
-class CPDS:
+class CPDS(ConfigurationDistinguishingSequence):
 
-    def __init__(self, ffsm : FFSM) -> None:
-        self.ffsm = ffsm
-        self.pds = None
-        self._calculate_graph()
+    def __init__(self, ffsm: FFSM) -> None:
+        super().__init__(ffsm)
     
-    def _calculate_graph(self) -> None:
-        graph = nx.Graph()
+    def _calculate_graph(self):
+        self.graph = nx.Graph()
         self.ffsm.reset_to_initial_state()
         seen_states = []
-        root = Option(self.ffsm.features,copy.deepcopy(self.ffsm), [(self.ffsm.features, [])])
+        root = Option(list(self.ffsm.features),copy.deepcopy(self.ffsm), [(self.ffsm.features, [])])
         nr_features = len(self.ffsm.features)
         options = [root]
         names = []
@@ -63,7 +49,7 @@ class CPDS:
             if id == None:
                 id = fresh_var(len(names))
                 names.append((to_discover, id))
-                graph.add_node(id, label=to_discover.features)
+                self.graph.add_node(id, label=to_discover.features)
             
             seen_states.append(to_discover)
             for input in to_discover.ffsm.alphabet:
@@ -94,8 +80,8 @@ class CPDS:
                     if node_id is None:
                         node_id = fresh_var(len(names))
                         names.append((new_option, node_id))
-                        graph.add_node(node_id, label=new_option.features)
-                        graph.add_edge(id,node_id, label=input)
+                        self.graph.add_node(node_id, label=new_option.features)
+                        self.graph.add_edge(id,node_id, label=input)
                         options.append(new_option)
                     
                         stop = True
@@ -103,10 +89,32 @@ class CPDS:
                             stop = stop and len(f) == 1 
                         if stop:
                             options = []
-                            self.pds = new_option.sequence
+                            self.exists = True
+                            
+                            self.configuration_ss = nx.MultiDiGraph()
+                            root = "a"
+                            self.configuration_ss.add_node(root, label=self.ffsm.features)
+                            count = 0
+                            for configuration, sequence in new_option.sequence:
+                                current_node = root
+                                for input, output in sequence:
+                                    label = input + "/" + output
+                                    to_node = None
+                                    for edge in self.configuration_ss.out_edges(current_node, data=True):
+                                        if edge[2]["label"] == label:
+                                            to_node = edge[1]
+                                            break
+                                    if to_node is not None:
+                                        self.configuration_ss.nodes[to_node]["label"] = self.configuration_ss.nodes[to_node]["label"].union(configuration)
+                                        current_node = to_node
+                                    else:
+                                        self.configuration_ss.add_node(root + str(count),label=configuration)
+                                        self.configuration_ss.add_edge(current_node, root + str(count), label=label)
+                                        current_node = root + str(count)
+                                        count = count + 1
+                            
                             break
-                except:
+                except Exception as e:
+                    print(e)
                     pass
-
-        self.graph = graph
-        nx.drawing.nx_agraph.write_dot(self.graph,"test-cpds.dot")
+        

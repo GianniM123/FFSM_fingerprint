@@ -1,27 +1,12 @@
 from dataclasses import dataclass
 import copy
 import string
-from collections import deque
  
 import networkx as nx
 
 from base.FFSM.FFSM import FFSM,  unify_features
+from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence, id_in_list, fresh_var
 
-
-def fresh_var(index : int):
-    '''Generate a fresh variable on basis of the given index'''
-    letters = string.ascii_lowercase
-    value = 1
-    if index >= len(letters):
-        value = int(index / len(letters)) + 1
-        index = index % len(letters)
-    return letters[index] * value
-
-def id_in_list(id, list):
-    for ids in list:
-        if ids[0] == id:
-            return ids[1]
-    return None
 
 
 @dataclass
@@ -44,40 +29,42 @@ class Option:
             return (self.features == other.features and equal) 
 
 
-class CADS:
+class CADS(ConfigurationDistinguishingSequence):
 
-    def __init__(self, ffsm : FFSM) -> None:
-        self.ffsm = ffsm
-        self.ads_found = False
-        self._calculate_graph()
+    def __init__(self, ffsm: FFSM) -> None:
+        super().__init__(ffsm)
     
-    def _calculate_graph(self) -> None:
-        graph = nx.MultiDiGraph()
+    def _calculate_graph(self):
+        self.graph = nx.MultiDiGraph()
         self.ffsm.reset_to_initial_state()
         seen_states = []
         root = Option(self.ffsm.features,copy.deepcopy(self.ffsm), [], None)
-        
-        options = deque()
+
+        options = []
         options.append(root)
         names = []
+
+        self.root = fresh_var(len(names))
+        names.append((root, self.root))
+        self.graph.add_node(self.root, label=root.features)
         while len(options) > 0:
-            to_discover = options.pop()
+            to_discover = options.pop(0)
             id = id_in_list(to_discover,names)
             if id == None:
                 id = fresh_var(len(names))
                 names.append((to_discover, id))
-                graph.add_node(id, label=to_discover.features)
+                self.graph.add_node(id, label=to_discover.features)
             
             if to_discover.pre != None:
                 node_id = id_in_list(to_discover.pre,names)
                 if node_id is None:
                     node_id = fresh_var(len(names))
                     names.append((to_discover.pre, node_id))
-                    graph.add_node(node_id, label=to_discover.pre.features)
-                graph.add_edge(node_id,id, label=to_discover.sequence[-1][0] + "/" + to_discover.sequence[-1][1])
+                    self.graph.add_node(node_id, label=to_discover.pre.features)
+                self.graph.add_edge(node_id,id, label=to_discover.sequence[-1][0] + "/" + to_discover.sequence[-1][1])
 
             seen_states.append(to_discover)
-            for input in self._best_input(to_discover.ffsm):
+            for input in self.ffsm.alphabet:#self._best_input(to_discover.ffsm):
                 try:
                     new_ffsm = copy.deepcopy(to_discover.ffsm)
                     outputs = new_ffsm.step(input)
@@ -92,68 +79,44 @@ class CADS:
                             output_dict[out] = output_dict[out].union(set(features))
                     if counter != len(to_discover.features):
                         continue
-                    done = False
                     for output, features  in output_dict.items():
                         step_ffsm = copy.deepcopy(to_discover.ffsm)
                         step_ffsm.step(input,features)
                         new_option = Option(features,step_ffsm, to_discover.sequence + [(input,output)], to_discover)
      
                         if len(new_option.features) == 1:
-                            done = True
                             seen_states.append(new_option)    
 
                             node_id = id_in_list(new_option,names)
                             if node_id is None:
                                 node_id = fresh_var(len(names))
                                 names.append((new_option, node_id))
-                                graph.add_node(node_id, label=new_option.features)
-                            graph.add_edge(id,node_id, label=input + "/" + output)
-                            filtered = list(filter(lambda x: len(x.features) == 1, seen_states))
-                            just_features = [list(x.features)[0] for x in filtered]
-                            
-                            for f1 in self.ffsm.features:
-                                if f1 not in just_features:
-                                    done = False
-                                    break
-                            if done:
-                                options = []
+                                self.graph.add_node(node_id, label=new_option.features)
+                            self.graph.add_edge(id,node_id, label=input + "/" + output)
                                 
                         elif new_option not in seen_states and new_option not in options:
                             options.append(new_option)
-                    if done:
-                        self.ads_found = True
-                        self.graph = graph 
 
-                        self._clean_up_graph()
 
-                        for node in graph.nodes.data():
-                            input_dict = {}
-                            for edge in graph.out_edges(node[0], data=True):
-                                input = edge[2]["label"].split("/")[0]
-                                if input not in input_dict.keys():
-                                    input_dict[input] = graph.nodes[edge[1]]["label"]
-                                else:
-                                    input_dict[input] = input_dict[input].union(graph.nodes[edge[1]]["label"])
-                            
-                            all_edges = copy.deepcopy(graph.out_edges(node[0], keys=True, data=True))
-                            for input, feature_set in input_dict.items():
-                                if feature_set != node[1]["label"]:
-                                    for edge in all_edges:
-                                        if input == edge[3]["label"].split("/")[0]:
-                                            graph.remove_edge(edge[0],edge[1],key=edge[2])
-
-                        self._clean_up_graph()                    
-
-                        break
-
-                        
-                        
                 except Exception as e:
                     print(e)
                     pass
-
         
-        nx.drawing.nx_agraph.write_dot(self.graph,"test.dot")
+        filtered = list(filter(lambda x: len(x.features) == 1, seen_states))
+        just_features = set([list(x.features)[0] for x in filtered])
+        self.exists = True
+        for f1 in self.ffsm.features:
+            if f1 not in just_features:
+                self.exists = False
+                break
+        
+        self.non_optimized_graph = copy.deepcopy(self.graph)
+        nx.drawing.nx_agraph.write_dot(self.non_optimized_graph,"cads.dot") 
+        if self.exists:
+            self._fix_graph_according_definition()
+            self.configuration_ss = self.graph            
+        
+        
 
     def _best_input(self, ffsm : FFSM):
         edges = []
@@ -181,12 +144,12 @@ class CADS:
                 if state not in states:
                     states.append(state)
             if len(outputs) > 1:
-                rank_best_inputs.append(input)
+                rank_best_inputs.insert(0,input)
                 counter = counter + 1
             elif len(states) > 1 and len(rank_best_inputs) >= 1:
-                rank_best_inputs.insert(len(rank_best_inputs)-counter,input)
+                rank_best_inputs.insert(counter,input)
             else:
-                rank_best_inputs.insert(0,input) 
+                rank_best_inputs.append(input) 
         return rank_best_inputs        
 
     def _clean_up_graph(self):
@@ -195,9 +158,31 @@ class CADS:
             did_remove = False
             all_nodes = copy.deepcopy(self.graph.nodes.data())
             for node in all_nodes:
-                if self.graph.degree(node[0]) == 0 or self.graph.out_degree(node[0]) == 0 and len(set(node[1]["label"])) != 1:
+                if self.graph.degree(node[0]) == 0 or self.graph.out_degree(node[0]) == 0 and len(set(node[1]["label"])) != 1 or self.graph.in_degree(node[0]) == 0 and node[0] != self.root:
                     self.graph.remove_node(node[0])
                     did_remove = True
 
+    def _fix_graph_according_definition(self):
+        self._clean_up_graph()
+        for node in self.graph.nodes.data():
+            input_dict = {}
+            for edge in self.graph.out_edges(node[0], data=True):
+                input = edge[2]["label"].split("/")[0]
+                if input not in input_dict.keys():
+                    input_dict[input] = self.graph.nodes[edge[1]]["label"]
+                else:
+                    input_dict[input] = input_dict[input].union(self.graph.nodes[edge[1]]["label"])
+            
+            all_edges = copy.deepcopy(self.graph.out_edges(node[0], keys=True, data=True))
+            found = False
+            for input, feature_set in input_dict.items():
+                if feature_set != node[1]["label"] or found:
+                    for edge in all_edges:
+                        if input == edge[3]["label"].split("/")[0]:
+                            self.graph.remove_edge(edge[0],edge[1],key=edge[2])
+                else:
+                    found = True
+
+        self._clean_up_graph()
         
 
