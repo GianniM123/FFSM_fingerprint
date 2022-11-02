@@ -11,7 +11,7 @@ The following pip packages are needed to run the fingerpinter:
  - flamapy-sat
 
 ## Active
-To actively fingerprint a system the `-a` option must be given with a path to a Finite State Machine representation of a system.
+To actively fingerprint a system the `-a` option must be given with a path to a Finite State Machine representation of a system. Also the option of a `preset` or `adaptive` sequence can be set by using the corrosponding `--adaptive` or `--preset` flags. By not given the flags it will be `adaptive` by default.
 
 ```
 python3 main.py -f <path/to/ffsm.dot> -a <path/to/fsm.dot>

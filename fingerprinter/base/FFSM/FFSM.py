@@ -111,7 +111,7 @@ class FFSM():
             for input, features in input_dict.items():
                 feature_diff = state.features.difference(features)
                 if len(feature_diff) > 0:
-                    self.transitions.append(ConditionalTransition(state,state,input,"",feature_diff))
+                    self.transitions.append(ConditionalTransition(state,state,input,'epsilon',feature_diff))
 
 
     def reset_to_initial_state(self):
