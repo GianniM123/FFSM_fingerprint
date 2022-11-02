@@ -10,7 +10,7 @@ class Simulator:
         self.ds = ds
 
       
-    def _pds_fingerprint(self, sul : MealySUL) -> set[str]:
+    def _ds_fingerprint(self, sul : MealySUL) -> set[str]:
         self.total_queries = []
         if self.ds.exists == True:
             current_node = self.ds.root
@@ -18,10 +18,15 @@ class Simulator:
                 input = self.ds.seperating_sequence.nodes[current_node]["label"]
                 output = sul.step(input)
                 self.total_queries.append((input,output))
-
+            	
+                found = False
                 for edge in self.ds.seperating_sequence.out_edges(current_node, data=True):
                     if edge[2]["label"] == output:
                         current_node = edge[1]
+                        found = True
+                        break
+                if not found:
+                    return set()
 
             return self.ds.seperating_sequence.nodes[current_node]["label"]
         else:
@@ -29,8 +34,7 @@ class Simulator:
 
 
     def fingerprint_system(self, sul : MealySUL) -> set[str]:
-        # features = self._do_random_input(self.hdt.root,sul)
-        features = self._pds_fingerprint(sul)
+        features = self._ds_fingerprint(sul)
         print(self.total_queries)
         return features
 

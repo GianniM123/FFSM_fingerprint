@@ -1,7 +1,9 @@
 digraph G {
     graph [version="FreeBSD"];
 label=""
-s0 [color="red"]
+__start0 [label="" shape="none"];
+__start0 -> s0;
+s0 
 s1
 s2
 s3

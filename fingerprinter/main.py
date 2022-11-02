@@ -1,4 +1,4 @@
-from getopt import getopt
+import getopt
 from aalpy.utils.FileHandler import load_automaton_from_file
 from aalpy.SULs.AutomataSUL import MealySUL
 import sys
@@ -9,13 +9,15 @@ from base.fingerprint.passive.filehandler import read_traces
 from base.fingerprint.active.active import Simulator
 from base.fingerprint.active.CADS import CADS
 from base.fingerprint.active.CPDS import CPDS
+from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence
 
 def main():
     active_mode = None
     ffsm_file = None
     file = None
+    adaptive = True
     try:
-        arguments = getopt(sys.argv[1:],"p:f:a:",["passive=", "FFSM=", "active="])
+        arguments = getopt.getopt(sys.argv[1:],"p:f:a:",["passive=", "FFSM=", "active=", "preset", "adaptive"])
         for current_arg, current_val in arguments[0]:
             if current_arg in ("-p", "--passive"):
                 if active_mode == None:
@@ -25,6 +27,10 @@ def main():
                     raise Exception("Already in active mode, please select active OR passive mode")
             elif current_arg in ("-f", "--FFSM"):
                 ffsm_file = current_val
+            elif current_arg in ("--adaptive"):
+                adaptive = True
+            elif current_arg in ("--preset"):
+                adaptive = False
             elif current_arg in ("-a", "--active"):
                 if active_mode == None:
                     active_mode = True
@@ -45,9 +51,14 @@ def main():
     elif active_mode == True:
         ffsm = FFSM.from_file(ffsm_file)
         fsm = load_automaton_from_file(file,'mealy')
+        fsm.make_input_complete()
+        ffsm.make_input_complete()
         sul_fsm = MealySUL(fsm)
-        # ds = CADS(ffsm)
-        ds = CPDS(ffsm)
+        ds : ConfigurationDistinguishingSequence = None
+        if adaptive:
+            ds = CADS(ffsm)
+        if not adaptive:
+            ds = CPDS(ffsm)
         sim = Simulator(ds)
         possible_variants = sim.fingerprint_system(sul_fsm)
         print("variant: ", possible_variants)

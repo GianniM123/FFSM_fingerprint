@@ -1,27 +1,19 @@
 package com.thesis.checker;
 
-import net.automatalib.automata.transducers.impl.FastMealy;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
-import net.automatalib.automata.transducers.impl.compact.CompactMealyTransition;
 import net.automatalib.graphs.base.compact.CompactEdge;
 import net.automatalib.graphs.base.compact.CompactGraph;
 import net.automatalib.serialization.dot.DOTGraphParser;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier; 
 import net.automatalib.util.automata.Automata;
-import net.automatalib.words.impl.FastAlphabet;
 import net.automatalib.words.impl.ListAlphabet;
-/**
- * Hello world!
- *
- */
+
+
 public class App 
 {
 

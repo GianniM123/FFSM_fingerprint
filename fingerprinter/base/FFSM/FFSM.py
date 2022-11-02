@@ -11,7 +11,7 @@ def unify_features(current_variants : set[str], new_variants : set[str]) -> set[
 
 class ConditionalState():
     
-    def __init__(self, state_id : str, features : list[str]):
+    def __init__(self, state_id : str, features : set[str]):
         self.state_id = state_id
         self.features = features
 
@@ -25,7 +25,7 @@ class ConditionalState():
 
 class ConditionalTransition():
 
-    def __init__(self, from_state: ConditionalState, to_state: ConditionalState, input : str, output : str, features : list[str]):
+    def __init__(self, from_state: ConditionalState, to_state: ConditionalState, input : str, output : str, features : set[str]):
         self.from_state = from_state
         self.to_state = to_state
         self.input = input
@@ -42,7 +42,7 @@ class FFSM():
         self.transitions = transitions
         self.initial_state = initial_state
         
-        self.states = []
+        self.states : list[ConditionalState] = []
         self.features = set()
         self.alphabet = set()
         for transition in self.transitions:
@@ -63,7 +63,7 @@ class FFSM():
             features = state[1]["feature"].split("|")
             if features[0] == "True":
                 features = []
-            states[state[0]] = ConditionalState(state[0],features)
+            states[state[0]] = ConditionalState(state[0],set(features))
         
         initial_state = None
         transitions = []
@@ -72,7 +72,7 @@ class FFSM():
                 initial_state = states[transition[1]]
                 continue
             in_output = transition[2]["label"].split("/")
-            features = transition[2]["feature"].split("|")
+            features = set(transition[2]["feature"].split("|"))
             transitions.append(ConditionalTransition(states[transition[0]], states[transition[1]], in_output[0].replace(" ", ""), in_output[1].replace(" ", ""),features))
         return FFSM(transitions, initial_state)
         
@@ -99,6 +99,20 @@ class FFSM():
         else:
             self.current_states = new_current_states
         return outputs
+
+    def make_input_complete(self):
+        for state in self.states:
+            input_dict = {}
+            for input in self.alphabet:
+                input_dict[input] = set()
+            for edge in self.outgoing_transitions_of(state):
+                input_dict[edge.input] = input_dict[edge.input].union(edge.features)
+            
+            for input, features in input_dict.items():
+                feature_diff = state.features.difference(features)
+                if len(feature_diff) > 0:
+                    self.transitions.append(ConditionalTransition(state,state,input,"",feature_diff))
+
 
     def reset_to_initial_state(self):
         self.current_states = [(self.initial_state, self.features)]
