@@ -51,6 +51,12 @@ def main():
     elif active_mode == True:
         ffsm = FFSM.from_file(ffsm_file)
         fsm = load_automaton_from_file(file,'mealy')
+        alphabet = set(ffsm.alphabet).difference(set(fsm.get_input_alphabet()))
+
+        for a in alphabet: #for the non exisiting alphabet add a self loop on the initial state, make_input_complete() will do the rest
+            fsm.initial_state.transitions[a] = fsm.initial_state
+            fsm.initial_state.output_fun[a] = 'epsilon'
+        
         fsm.make_input_complete()
         ffsm.make_input_complete()
         sul_fsm = MealySUL(fsm)
