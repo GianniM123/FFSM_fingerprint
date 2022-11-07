@@ -63,7 +63,7 @@ def main():
         ds : ConfigurationDistinguishingSequence = None
         if adaptive:
             ds = CADS(ffsm)
-        if not adaptive:
+        else:
             ds = CPDS(ffsm)
         sim = Simulator(ds)
         possible_variants = sim.fingerprint_system(sul_fsm)

@@ -598,6 +598,12 @@ class FFSMDiff(metaclass=Singleton):
         matched = self.matched_k_pairs_transitions(fsm_1,fsm_2,k_pairs)
         graph = self.annotade_graph(k_pairs,added,removed,matched,fsm_1,fsm_2, initial_state)
 
+        if "version" in fsm_1.graph.keys() and "version" in fsm_2.graph.keys():
+            graph.graph["configurations"] = fsm_1.graph["version"] + "|" + fsm_2.graph["version"]
+        elif "configurations" in fsm_1.graph.keys() and "version" in fsm_2.graph.keys():
+            graph.graph["configurations"] = fsm_1.graph["configurations"] + "|" + fsm_2.graph["version"]
+        elif "version" in fsm_1.graph.keys() and "configurations" in fsm_2.graph.keys():
+            graph.graph["configurations"] = fsm_2.graph["configurations"] + "|" + fsm_1.graph["version"]
         if self.logging:
             self.log_to_dict(fsm_1,fsm_2,added,removed,graph,graph.graph)
 

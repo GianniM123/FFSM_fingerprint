@@ -38,19 +38,18 @@ class ConditionalTransition():
 
 class FFSM():
     
-    def __init__(self, transitions: list[ConditionalTransition], initial_state: ConditionalState):
+    def __init__(self, transitions: list[ConditionalTransition], initial_state: ConditionalState, features : set[str]):
         self.transitions = transitions
         self.initial_state = initial_state
         
         self.states : list[ConditionalState] = []
-        self.features = set()
+        self.features = features
         self.alphabet = set()
         for transition in self.transitions:
             if transition.from_state not in self.states:
                 self.states.append(transition.from_state)
             if transition.to_state not in self.states:
                 self.states.append(transition.to_state)  
-            self.features = self.features.union(set(transition.features))
             self.alphabet.add(transition.input)
         self.reset_to_initial_state()      
 
@@ -64,7 +63,7 @@ class FFSM():
             if features[0] == "True":
                 features = []
             states[state[0]] = ConditionalState(state[0],set(features))
-        
+ 
         initial_state = None
         transitions = []
         for transition in ffsm.edges.data():
@@ -74,7 +73,10 @@ class FFSM():
             in_output = transition[2]["label"].split("/")
             features = set(transition[2]["feature"].split("|"))
             transitions.append(ConditionalTransition(states[transition[0]], states[transition[1]], in_output[0].replace(" ", ""), in_output[1].replace(" ", ""),features))
-        return FFSM(transitions, initial_state)
+        
+        features = set(ffsm.graph["configurations"].split("|"))
+        
+        return FFSM(transitions, initial_state, features)
         
     def __str__(self) -> str:
         output = ""
