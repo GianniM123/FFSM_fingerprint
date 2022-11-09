@@ -54,14 +54,16 @@ class FFSM():
         self.reset_to_initial_state()      
 
     @classmethod
-    def from_file(self, file: str):
+    def from_file(self, file: str) -> 'FFSM':
         ffsm = nx.drawing.nx_agraph.read_dot(file)
+
+        all_features = set(ffsm.graph["configurations"].split("|"))
 
         states = {}
         for state in ffsm.nodes.data():
             features = state[1]["feature"].split("|")
             if features[0] == "True":
-                features = []
+                features = all_features
             states[state[0]] = ConditionalState(state[0],set(features))
  
         initial_state = None
@@ -74,9 +76,9 @@ class FFSM():
             features = set(transition[2]["feature"].split("|"))
             transitions.append(ConditionalTransition(states[transition[0]], states[transition[1]], in_output[0].replace(" ", ""), in_output[1].replace(" ", ""),features))
         
-        features = set(ffsm.graph["configurations"].split("|"))
         
-        return FFSM(transitions, initial_state, features)
+        
+        return FFSM(transitions, initial_state, all_features)
         
     def __str__(self) -> str:
         output = ""
@@ -102,7 +104,7 @@ class FFSM():
             self.current_states = new_current_states
         return outputs
 
-    def make_input_complete(self):
+    def make_input_complete(self) -> None:
         for state in self.states:
             input_dict = {}
             for input in self.alphabet:
@@ -115,8 +117,22 @@ class FFSM():
                 if len(feature_diff) > 0:
                     self.transitions.append(ConditionalTransition(state,state,input,'epsilon',feature_diff))
 
+    def reset_when_sink(self):
+        for feature in self.features:
+            for state in self.states:
+                if feature in state.features:
+                    is_sink = True
+                    for edge in self.outgoing_transitions_of(state):
+                        if feature in edge.features and edge.to_state != state:
+                            is_sink = False
+                            break
+                    if is_sink:
+                        self.alphabet.add('RESET-SYS')
+                        self.transitions.append(ConditionalTransition(state,self.initial_state, 'RESET-SYS', 'epsilon', {feature}))
 
-    def reset_to_initial_state(self):
+
+
+    def reset_to_initial_state(self) -> None:
         self.current_states = [(self.initial_state, self.features)]
 
     def incoming_transitions_of(self, state : ConditionalState) -> list[ConditionalTransition]:

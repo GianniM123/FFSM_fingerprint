@@ -1,7 +1,8 @@
 import getopt
-from aalpy.utils.FileHandler import load_automaton_from_file
-from aalpy.SULs.AutomataSUL import MealySUL
 import sys
+from aalpy.SULs.AutomataSUL import MealySUL
+from aalpy.utils.FileHandler import load_automaton_from_file
+from aalpy.automata import MealyMachine
 
 from base.FFSM.FFSM import FFSM
 from base.fingerprint.passive.passive import trace_fingerprinting
@@ -10,6 +11,21 @@ from base.fingerprint.active.active import Simulator
 from base.fingerprint.active.CADS import CADS
 from base.fingerprint.active.CPDS import CPDS
 from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence
+
+
+def reset_when_sink(fsm : MealyMachine):
+    for state in fsm.states:
+        is_sink = True
+        for out_state in state.transitions.values():
+            if out_state.state_id != state.state_id:
+                is_sink = False
+                break
+        if is_sink:
+            state.transitions['RESET-SYS'] = fsm.initial_state
+            state.output_fun['RESET-SYS'] = 'epsilon'
+
+
+
 
 def main():
     active_mode = None
@@ -57,6 +73,9 @@ def main():
             fsm.initial_state.transitions[a] = fsm.initial_state
             fsm.initial_state.output_fun[a] = 'epsilon'
         
+        reset_when_sink(fsm)
+        ffsm.reset_when_sink()
+
         fsm.make_input_complete()
         ffsm.make_input_complete()
         sul_fsm = MealySUL(fsm)

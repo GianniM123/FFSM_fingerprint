@@ -400,6 +400,18 @@ class FFSMDiff(metaclass=Singleton):
                     from_state = self.fresh_var(k_pairs.index(k))
             if from_state is None and add[0] in added_dict.keys():
                 from_state = self.fresh_var(added_dict[add[0]])
+                edge_feature = add[2]["feature"].split("|")
+                edge_feature = set(edge_feature)
+                node_feature = graph.nodes[from_state]["feature"].split("|")
+                node_feature = set(node_feature).union(edge_feature)
+                node_feature = list(node_feature)
+                feature_str = ""
+                for i in range(0,len(node_feature)):
+                    if i == 0:
+                        feature_str = node_feature[i]
+                    else:
+                        feature_str = feature_str + "|" + node_feature[i]
+                graph.nodes[from_state]["feature"] = feature_str
             elif from_state is None:
                 num = nr_of_states + len(added_dict)
                 from_state = self.fresh_var(num)
@@ -412,6 +424,18 @@ class FFSMDiff(metaclass=Singleton):
                     to_state = self.fresh_var(k_pairs.index(k))
             if to_state is None and add[1] in added_dict.keys():
                 to_state = self.fresh_var(added_dict[add[1]])
+                edge_feature = add[2]["feature"].split("|")
+                edge_feature = set(edge_feature)
+                node_feature = graph.nodes[to_state]["feature"].split("|")
+                node_feature = set(node_feature).union(edge_feature)
+                node_feature = list(node_feature)
+                feature_str = ""
+                for i in range(0,len(node_feature)):
+                    if i == 0:
+                        feature_str = node_feature[i]
+                    else:
+                        feature_str = feature_str + "|" + node_feature[i]
+                graph.nodes[to_state]["feature"] = feature_str
             elif to_state is None:
                 num = nr_of_states + len(added_dict)
                 to_state = self.fresh_var(num)
