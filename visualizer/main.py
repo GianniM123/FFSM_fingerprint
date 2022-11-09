@@ -1,4 +1,3 @@
-from statistics import mode
 from sys import argv
 import networkx as nx
 

@@ -1,0 +1,19 @@
+digraph "" {
+	node [label="\N"];
+	a0	[label=ServerHelloRSA];
+	a1	[label=ServerHelloDHE];
+	a0 -> a1	[key=0,
+		label=Empty];
+	a3	[label="{'1.0.2_full'}"];
+	a1 -> a3	[key=0,
+		label="AlertFatal(Unexpectedmessage)&ConnectionClosed"];
+	a4	[label=ChangeCipherSpec];
+	a1 -> a4	[key=0,
+		label=epsilon];
+	a9	[label="{'1.0.1j_regular'}"];
+	a4 -> a9	[key=0,
+		label="AlertFatal(Unexpectedmessage)&ConnectionClosed"];
+	a6	[label="{'1.0.1g'}"];
+	a4 -> a6	[key=0,
+		label=Empty];
+}
