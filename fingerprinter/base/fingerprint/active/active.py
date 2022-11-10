@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from aalpy.SULs.AutomataSUL import MealySUL
 from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence
 

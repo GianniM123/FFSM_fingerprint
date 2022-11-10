@@ -1,6 +1,6 @@
 digraph "" {
 	graph [configurations="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10"];
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10"];
 	node [label="\N"];
 	__start0	[feature=True,
 		label="",
@@ -8,36 +8,36 @@ digraph "" {
 	b	[feature=True];
 	__start0 -> b	[key=0];
 	c	[feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10"];
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10"];
 	b -> c	[key=0,
-		feature="1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.1.0-TLS10",
 		label="AlertWarningCloseNotify / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	b -> c	[key=1,
-		feature="1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.1.0-TLS10",
 		label="ApplicationData / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	b -> c	[key=2,
-		feature="1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.1.0-TLS10",
 		label="ChangeCipherSpec / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	b -> c	[key=3,
-		feature="1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.1.0-TLS10",
 		label="DHClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	b -> c	[key=4,
-		feature="1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.1.0-TLS10",
 		label="DHEServerKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	b -> c	[key=5,
-		feature="1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.1.0-TLS10",
 		label="ECDHClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	b -> c	[key=6,
-		feature="1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.1.0-TLS10",
 		label="Finished / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	b -> c	[key=7,
-		feature="1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.1.0-TLS10",
 		label="RSAClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	b -> c	[key=8,
-		feature="1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.1.0-TLS10",
 		label="ServerHello / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	b -> c	[key=9,
-		feature="1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.1.0-TLS10",
 		label="ServerHelloDone / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	b -> c	[key=10,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
@@ -80,214 +80,211 @@ digraph "" {
 1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10",
 		label="ServerHelloDone / -"];
 	d	[feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10"];
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10"];
 	b -> d	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ClientHello / SERVER_HELLO|CERTIFICATE|SERVER_HELLO_DONE"];
 	c -> c	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="AlertWarningCloseNotify / ConnectionClosed"];
 	c -> c	[key=1,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ApplicationData / ConnectionClosed"];
 	c -> c	[key=2,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ChangeCipherSpec / ConnectionClosed"];
 	c -> c	[key=3,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ClientHello / ConnectionClosed"];
 	c -> c	[key=4,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHClientKeyExchange / ConnectionClosed"];
 	c -> c	[key=5,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHEServerKeyExchange / ConnectionClosed"];
 	c -> c	[key=6,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ECDHClientKeyExchange / ConnectionClosed"];
 	c -> c	[key=7,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="Finished / ConnectionClosed"];
 	c -> c	[key=8,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="RSAClientKeyExchange / ConnectionClosed"];
 	c -> c	[key=9,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHello / ConnectionClosed"];
 	c -> c	[key=10,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHelloDone / ConnectionClosed"];
 	d -> c	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="AlertWarningCloseNotify / ConnectionClosed"];
 	d -> c	[key=1,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ApplicationData / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	d -> c	[key=2,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHEServerKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	d -> c	[key=3,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="Finished / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	d -> c	[key=4,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHello / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	d -> c	[key=5,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHelloDone / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	d -> c	[key=6,
-		feature="0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+		feature="0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ChangeCipherSpec / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	d -> c	[key=7,
-		feature="1.0.0p-TLS10|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.0.0p-TLS10|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ECDHClientKeyExchange / ALERT_FATAL_DECODE_ERROR|ConnectionClosed"];
 	d -> c	[key=8,
-		feature="1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ClientHello / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	d -> c	[key=9,
-		feature="1.1.1-TLS10",
-		label="DHClientKeyExchange / ALERT_FATAL_DECRYPT_ERROR|ConnectionClosed"];
-	d -> c	[key=10,
 		feature="1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHClientKeyExchange / ConnectionClosed"];
-	d -> c	[key=11,
+	d -> c	[key=10,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.1-TLS11|1.0.1d-TLS11",
 		label="ECDHClientKeyExchange / ConnectionClosed"];
-	d -> c	[key=12,
+	d -> c	[key=11,
 		feature="0.9.8s-TLS10",
 		label="ClientHello / SERVER_HELLO|CERTIFICATE|SERVER_HELLO_DONE|ConnectionClosed"];
-	d -> c	[key=13,
+	d -> c	[key=12,
 		feature="0.9.8l-TLS10",
 		label="ClientHello / ALERT_FATAL_HANDSHAKE_FAILURE|ConnectionClosed"];
 	e	[feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10"];
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10"];
 	d -> e	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="RSAClientKeyExchange / -"];
-	j	[feature="|1.0.2-TLS10|1.0.0p-TLS10|0.9.8u-TLS10|1.0.1d-TLS11|0.9.8y-TLS10|0.9.8zb-TLS10|1.0.1k-TLS10|0.9.8s-TLS10|0.9.8za-TLS10|0.9.7e-TLS10|\
-0.9.8l-TLS10|1.0.1-TLS11|0.9.7-TLS10"];
+	j	[feature="1.0.1d-TLS11|1.0.0p-TLS10|0.9.8y-TLS10|0.9.7e-TLS10|0.9.8zb-TLS10|1.0.2-TLS10|1.0.1k-TLS10|0.9.8za-TLS10|1.0.1-TLS11|0.9.7-TLS10|\
+0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10"];
 	d -> j	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
 1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10",
 		label="DHClientKeyExchange / -"];
-	k	[feature="|1.0.2-TLS10|1.0.0p-TLS10|0.9.8u-TLS10|1.0.1d-TLS11|0.9.8y-TLS10|0.9.8zb-TLS10|1.0.1k-TLS10|0.9.8s-TLS10|0.9.8za-TLS10|0.9.7e-TLS10|\
-0.9.8l-TLS10|1.0.1-TLS11|0.9.7-TLS10"];
+	k	[feature="1.0.1d-TLS11|1.0.0p-TLS10|0.9.8y-TLS10|0.9.7e-TLS10|0.9.8zb-TLS10|1.0.2-TLS10|1.0.1k-TLS10|0.9.8za-TLS10|1.0.1-TLS11|0.9.7-TLS10|\
+0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10"];
 	d -> k	[key=0,
 		feature="1.0.1-TLS11",
 		label="ChangeCipherSpec / -"];
-	l	[feature="|1.0.0p-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|1.0.1d-TLS11|1.0.1-TLS11|0.9.8y-TLS10|0.9.8zb-TLS10|1.0.1k-TLS10|0.9.7-TLS10|0.9.8za-TLS10"];
+	l	[feature="1.0.1d-TLS11|1.0.0p-TLS10|0.9.8y-TLS10|1.0.1k-TLS10|0.9.7e-TLS10|1.0.1-TLS11|0.9.8zb-TLS10|0.9.7-TLS10|0.9.8za-TLS10|0.9.8u-TLS10"];
 	d -> l	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|1.0.1k-TLS10",
 		label="ClientHello / SERVER_HELLO|CERTIFICATE|SERVER_HELLO_DONE"];
-	m	[feature="|0.9.7e-TLS10|0.9.8u-TLS10|1.0.1d-TLS11|0.9.8l-TLS10|0.9.8y-TLS10|0.9.8s-TLS10|0.9.7-TLS10"];
+	m	[feature="1.0.1d-TLS11|0.9.8y-TLS10|0.9.7e-TLS10|0.9.7-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10"];
 	d -> m	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|1.0.1d-TLS11",
 		label="ChangeCipherSpec / -"];
 	e -> c	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="AlertWarningCloseNotify / ConnectionClosed"];
 	e -> c	[key=1,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ApplicationData / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	e -> c	[key=2,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ClientHello / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	e -> c	[key=3,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	e -> c	[key=4,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ECDHClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	e -> c	[key=5,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="Finished / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	e -> c	[key=6,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="RSAClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	e -> c	[key=7,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHello / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	e -> c	[key=8,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHelloDone / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	e -> c	[key=9,
-		feature="0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+		feature="0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHEServerKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	e -> c	[key=10,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|1.0.1-TLS11|1.0.1d-TLS11",
 		label="DHEServerKeyExchange / ALERT_FATAL_ILLEGAL_PARAMETER|ConnectionClosed"];
 	f	[feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10"];
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10"];
 	e -> f	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ChangeCipherSpec / -"];
 	f -> c	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ClientHello / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	f -> c	[key=1,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	f -> c	[key=2,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ECDHClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	f -> c	[key=3,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="RSAClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	f -> c	[key=4,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHello / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	f -> c	[key=5,
 		feature="0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|\
-1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ApplicationData / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	f -> c	[key=6,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHelloDone / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	f -> c	[key=7,
 		feature="0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="AlertWarningCloseNotify / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	f -> c	[key=8,
 		feature="0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ChangeCipherSpec / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	f -> c	[key=9,
-		feature="0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+		feature="0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHEServerKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	f -> c	[key=10,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|1.0.1-TLS11|1.0.1d-TLS11",
@@ -311,49 +308,49 @@ digraph "" {
 		feature="0.9.7-TLS10",
 		label="ChangeCipherSpec / ConnectionClosed"];
 	g	[feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10"];
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10"];
 	f -> g	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="Finished / CHANGE_CIPHER_SPEC|FINISHED"];
 	g -> c	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1d-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ApplicationData / APPLICATION|ConnectionClosed"];
 	g -> c	[key=1,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|\
-1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	g -> c	[key=2,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|\
-1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHEServerKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	g -> c	[key=3,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|\
-1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ECDHClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	g -> c	[key=4,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|\
-1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="Finished / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	g -> c	[key=5,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|\
-1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="RSAClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	g -> c	[key=6,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|\
-1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHello / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	g -> c	[key=7,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|\
-1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="AlertWarningCloseNotify / ConnectionClosed"];
 	g -> c	[key=8,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHelloDone / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	g -> c	[key=9,
-		feature="1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+		feature="1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ChangeCipherSpec / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	g -> c	[key=10,
 		feature="1.0.1d-TLS11",
@@ -364,15 +361,15 @@ digraph "" {
 	g -> c	[key=12,
 		feature="1.0.1d-TLS11",
 		label="ServerHelloDone / ALERT_FATAL_BAD_RECORD_MAC|ConnectionClosed"];
-	h	[feature="|0.9.7e-TLS10|0.9.7-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10"];
+	h	[feature="0.9.7e-TLS10|0.9.7-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|1.0.1k-TLS10|\
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10"];
 	g -> h	[key=0,
-		feature="0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+		feature="0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ClientHello / SERVER_HELLO|CHANGE_CIPHER_SPEC|FINISHED"];
 	g -> k	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11",
 		label="ChangeCipherSpec / -"];
-	n	[feature="|0.9.7e-TLS10|0.9.8u-TLS10|1.0.1d-TLS11|0.9.8l-TLS10|1.0.1-TLS11|0.9.8y-TLS10|0.9.8s-TLS10|0.9.7-TLS10|0.9.8za-TLS10"];
+	n	[feature="1.0.1d-TLS11|0.9.8y-TLS10|0.9.8za-TLS10|0.9.7e-TLS10|1.0.1-TLS11|0.9.7-TLS10|0.9.8l-TLS10|0.9.8s-TLS10|0.9.8u-TLS10"];
 	g -> n	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|1.0.1d-TLS11",
 		label="ClientHello / SERVER_HELLO|CHANGE_CIPHER_SPEC|FINISHED"];
@@ -402,98 +399,98 @@ digraph "" {
 		label="ServerHelloDone / -"];
 	h -> c	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="AlertWarningCloseNotify / ConnectionClosed"];
 	h -> c	[key=1,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ApplicationData / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	h -> c	[key=2,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ClientHello / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	h -> c	[key=3,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	h -> c	[key=4,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ECDHClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	h -> c	[key=5,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="Finished / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	h -> c	[key=6,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="RSAClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	h -> c	[key=7,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHello / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	h -> c	[key=8,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1d-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHelloDone / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	h -> c	[key=9,
-		feature="0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+		feature="0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHEServerKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	h -> c	[key=10,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|1.0.1d-TLS11",
 		label="DHEServerKeyExchange / ALERT_FATAL_ILLEGAL_PARAMETER|ConnectionClosed"];
-	i	[feature="|0.9.8za-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|1.0.0p-TLS10|0.9.8zb-TLS10|0.9.8y-TLS10|0.9.8u-TLS10|0.9.7-TLS10|1.0.1-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10"];
+	i	[feature="0.9.8s-TLS10|1.0.1-TLS11|0.9.8y-TLS10|0.9.8u-TLS10|0.9.7-TLS10|1.0.0p-TLS10|0.9.7e-TLS10|0.9.8zb-TLS10|0.9.8za-TLS10|1.0.1k-TLS10|\
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10"];
 	h -> i	[key=0,
-		feature="0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+		feature="0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ChangeCipherSpec / -"];
-	o	[feature="|0.9.7e-TLS10|0.9.8u-TLS10|1.0.1d-TLS11|1.0.1-TLS11|0.9.8y-TLS10|0.9.7-TLS10|0.9.8za-TLS10"];
+	o	[feature="1.0.1d-TLS11|0.9.8y-TLS10|0.9.7-TLS10|0.9.7e-TLS10|1.0.1-TLS11|0.9.8za-TLS10|0.9.8u-TLS10"];
 	h -> o	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|1.0.1d-TLS11",
 		label="ChangeCipherSpec / -"];
 	i -> c	[key=0,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ClientHello / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	i -> c	[key=1,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	i -> c	[key=2,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="DHEServerKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	i -> c	[key=3,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ECDHClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	i -> c	[key=4,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="Finished / ALERT_FATAL_DECRYPT_ERROR|ConnectionClosed"];
 	i -> c	[key=5,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="RSAClientKeyExchange / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	i -> c	[key=6,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHello / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	i -> c	[key=7,
 		feature="0.9.7-TLS10|0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|\
-1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2-TLS10|1.0.2m-TLS10|1.1.0-TLS10",
 		label="ServerHelloDone / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	i -> c	[key=8,
 		feature="0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|1.0.2-TLS10|\
-1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2m-TLS10|1.1.0-TLS10",
 		label="AlertWarningCloseNotify / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	i -> c	[key=9,
 		feature="0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|1.0.2-TLS10|\
-1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2m-TLS10|1.1.0-TLS10",
 		label="ApplicationData / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	i -> c	[key=10,
 		feature="0.9.7e-TLS10|0.9.8s-TLS10|0.9.8u-TLS10|0.9.8y-TLS10|0.9.8za-TLS10|0.9.8zb-TLS10|1.0.0p-TLS10|1.0.1-TLS11|1.0.1k-TLS10|1.0.2-TLS10|\
-1.0.2m-TLS10|1.1.0-TLS10|1.1.1-TLS10",
+1.0.2m-TLS10|1.1.0-TLS10",
 		label="ChangeCipherSpec / ALERT_FATAL_UNEXPECTED_MESSAGE|ConnectionClosed"];
 	i -> c	[key=11,
 		feature="0.9.7-TLS10",

@@ -1,5 +1,6 @@
 import getopt
 import sys
+from datetime import datetime
 from aalpy.SULs.AutomataSUL import MealySUL
 from aalpy.utils.FileHandler import load_automaton_from_file
 from aalpy.automata import MealyMachine
@@ -80,10 +81,14 @@ def main():
         ffsm.make_input_complete()
         sul_fsm = MealySUL(fsm)
         ds : ConfigurationDistinguishingSequence = None
+        begin_time = datetime.now()
         if adaptive:
             ds = CADS(ffsm)
         else:
             ds = CPDS(ffsm)
+        end_time = datetime.now()
+        diff_time = (end_time - begin_time).total_seconds()
+        print("calculation costs: ", diff_time, " seconds")
         sim = Simulator(ds)
         possible_variants = sim.fingerprint_system(sul_fsm)
         print("variant: ", possible_variants)

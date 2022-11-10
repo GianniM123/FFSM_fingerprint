@@ -1,0 +1,35 @@
+digraph "" {
+	graph [configurations="A|B|C|D"];
+	node [label="\N"];
+	__start0	[feature=True,
+		label="",
+		shape=none];
+	b	[feature=True];
+	__start0 -> b	[key=0];
+	b -> b	[feature="A|B|C|D",
+		label="y/0"];
+
+	c	[feature="A|B"];
+    b -> c	[feature="A|B",
+		label="x/1"];
+    d	[feature="C|D"];
+    b -> d	[feature="C|D",
+		label="x/0"];
+	c -> c	[feature="A|B",
+		label="x/0"];
+    e	[feature="A|B"];
+	c -> e	[feature="A|B",
+		label="y/0"];
+	e -> e	[feature="A",
+		label="x/0"];
+    e -> e	[feature="B",
+		label="x/1"];
+    e -> e [feature="A|B",
+		label="y/1"];
+    d -> d	[feature="C",
+		label="x/0"];
+    d -> d	[feature="D",
+		label="x/1"];
+    d -> d [feature="C|D",
+		label="y/1"];
+}
