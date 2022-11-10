@@ -27,7 +27,7 @@ class ConfigurationDistinguishingSequence(ABC):
         print(self.exists)
         if self.exists:
             self._parse_distinguishing_sequence()
-            nx.drawing.nx_agraph.write_dot(self.seperating_sequence,"test.dot")
+            nx.drawing.nx_agraph.write_dot(self.seperating_sequence,"ADS.dot")
 
     @abstractmethod
     def _calculate_graph(self) -> None:

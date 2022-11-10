@@ -83,9 +83,7 @@ class CADS(ConfigurationDistinguishingSequence):
                                 graph = copy.deepcopy(self.graph)
                                 self._fix_graph()
                                 if len(self.graph.nodes) > 1:
-                                    nx.drawing.nx_agraph.write_dot(self.graph, "test1.dot")
                                     self._remove_double_inputs()
-                                    nx.drawing.nx_agraph.write_dot(self.graph, "test2.dot")
                                     self.exists = True
                                     self.configuration_ss = self.graph
                                 else:
