@@ -13,7 +13,7 @@ from base.fingerprint.active.ConfigurationDistinguishingSequence import Configur
 class Option:
     features: set[str]
     ffsm: FFSM
-    graph : nx.MultiDiGraph
+    sequence : list[str]
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Option):
@@ -36,31 +36,22 @@ class CADS(ConfigurationDistinguishingSequence):
     def _calculate_graph(self):
         self.ffsm.reset_to_initial_state()
         seen_states = []
-        root = Option(self.ffsm.features,copy.deepcopy(self.ffsm), nx.MultiDiGraph())
+        root = Option(self.ffsm.features,copy.deepcopy(self.ffsm), [])
 
         options : list[Option] = []
         options.append(root)
-        names = []
 
-        self.root = fresh_var(len(names))
-        names.append((root, self.root))
-        root.graph.add_node(self.root, label=root.features)
+        self.graph : nx.MultiDiGraph = nx.MultiDiGraph()
+        self.root = fresh_var(0)
+        self.graph.add_node(self.root, label=root.features)
         while len(options) > 0:
             to_discover = options.pop(0)
-            id = id_in_list(to_discover,names)
-            if id == None:
-                id = fresh_var(len(names))
-                names.append((to_discover, id))
-                to_discover.graph.add_node(id, label=to_discover.features)
-            elif not to_discover.graph.has_node(id):
-                to_discover.graph.add_node(id, label=to_discover.features)
-            
+      
             seen_states.append(to_discover)
-            # for input in self.ffsm.alphabet:
-            for input in self._best_input(to_discover.ffsm):
+            for input in self.ffsm.alphabet:
+            # for input in self._best_input(to_discover.ffsm):
                 try:
                     new_ffsm = copy.deepcopy(to_discover.ffsm)
-                    new_graph = copy.deepcopy(to_discover.graph)
                     outputs = new_ffsm.step(input)
                     output_dict : dict[str, set] = {}
                     counter = 0
@@ -76,29 +67,21 @@ class CADS(ConfigurationDistinguishingSequence):
                     for output, features  in output_dict.items():
                         step_ffsm = copy.deepcopy(to_discover.ffsm)
                         step_ffsm.step(input,features)
-                        new_option = Option(features,step_ffsm, new_graph)
-
-                        node_id = id_in_list(new_option,names)
-                        if node_id is None:
-                            node_id = fresh_var(len(names))
-                            names.append((new_option, node_id))
-                            new_option.graph.add_node(node_id, label=new_option.features)
-                        elif not new_option.graph.has_node(node_id):
-                            new_option.graph.add_node(node_id, label=new_option.features)
-                        if node_id != id:
-                            new_option.graph.add_edge(id,node_id, label=input + "/" + output)
+                        new_option = Option(features,step_ffsm, to_discover.sequence  + [input + "/" + output])
 
                         if len(new_option.features) == 1:
                             seen_states.append(new_option)
-                            filtered = list(filter(lambda x: len(x[1]["label"]) == 1, new_option.graph.nodes.data()))
-                            just_features = set([list(x[1]["label"])[0] for x in filtered])
-                            self.exists = True
-                            for f1 in self.ffsm.features:
-                                if f1 not in just_features:
-                                    self.exists = False
-                                    break
-                            if self.exists:
-                                self.configuration_ss = new_option.graph
+
+                            self._add_sequence_in_graph(new_option.sequence, new_option.features)
+
+                            graph = copy.deepcopy(self.graph)
+                            self._fix_graph()
+                            if len(self.graph.nodes) > 1:
+                                nx.drawing.nx_agraph.write_dot(self.graph, "test1.dot")
+                                self.exists = True
+                                self.configuration_ss = self.graph
+                            else:
+                                self.graph = graph
 
                         elif new_option not in seen_states and new_option not in options:
                             options.append(new_option)
@@ -109,7 +92,7 @@ class CADS(ConfigurationDistinguishingSequence):
                 except Exception as e:
                     print(e)
                     pass
-        
+
         
 
     def _best_input(self, ffsm : FFSM):
@@ -146,3 +129,52 @@ class CADS(ConfigurationDistinguishingSequence):
                 rank_best_inputs.append(input) 
         return rank_best_inputs        
 
+    def _add_sequence_in_graph(self, sequence, configuration):
+        current_node = self.root
+        
+        for trace in sequence:
+            edges = self.graph.out_edges(current_node, data=True)
+            to_node = None
+            for edge in edges:
+                if edge[2]["label"] == trace:
+                    to_node = edge[1]
+                    break
+            if to_node is not None:
+                self.graph.nodes[to_node]["label"] = self.graph.nodes[to_node]["label"].union(configuration)
+                current_node = to_node
+            else:
+                new_node = fresh_var(len(self.graph.nodes))
+                self.graph.add_node(new_node,label=configuration)
+                self.graph.add_edge(current_node, new_node, label=trace)
+                current_node = new_node
+    
+    def _fix_graph(self):
+
+        # Check if the property holds that for a input Parent is subset equal to children 
+        for node in self.graph.nodes.data():
+            input_dict = {}
+            for edge in self.graph.out_edges(node[0], data=True):
+                input = edge[2]["label"].split("/")[0]
+                if input not in input_dict.keys():
+                    input_dict[input] = self.graph.nodes[edge[1]]["label"]
+                else:
+                    input_dict[input] = input_dict[input].union(self.graph.nodes[edge[1]]["label"])
+
+            all_edges = copy.deepcopy(self.graph.out_edges(node[0], keys=True, data=True))
+            for input, feature_set in input_dict.items():
+                if feature_set != node[1]["label"] or found:
+                    for edge in all_edges:
+                        if input == edge[3]["label"].split("/")[0]:
+                            self.graph.remove_edge(edge[0],edge[1],key=edge[2])
+        rerun = False
+        nodes = copy.deepcopy(self.graph.nodes.data())
+        for node in nodes:
+            if node[0] != self.root:
+                if not nx.has_path(self.graph,self.root,node[0]):
+                    self.graph.remove_node(node[0])
+                elif self.graph.out_degree(node[0]) == 0 and len(node[1]["label"]) != 1:
+                    self.graph.remove_node(node[0])
+                    rerun = True
+        
+        if rerun:
+            self._fix_graph()
