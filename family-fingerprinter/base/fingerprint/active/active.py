@@ -19,7 +19,7 @@ class Simulator:
             	
                 found = False
                 for edge in self.ds.seperating_sequence.out_edges(current_node, data=True):
-                    if edge[2]["label"] == output:
+                    if edge[2]["label"] == str(output):
                         current_node = edge[1]
                         found = True
                         break
