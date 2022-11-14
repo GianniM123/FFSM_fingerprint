@@ -27,35 +27,36 @@ def calculate_fingerpint_sequences(fsms : list[MealyMachine]) -> list[list[str]]
     partition = [set(fsms)]
     sequences : list[list[str]] = []
     while len(partition) != len(fsms):
-        new_partition = []
-
         for part in partition:
-            if len(part) == 1:
-                new_partition.append(part)
-            else:
+            if len(part) > 1:
                 list_set = list(part)
                 fsm1 = list_set[0]
                 fsm2 = list_set[1]
                 try:
-                    
                     seq = find_separating_sequence(fsm1,fsm2)
                     sequences.append(seq)
-                    split_dict : dict[str,set] = {}
-                    for f in part:
-                        output_seq = f.compute_output_seq(f.initial_state,seq)
-                        output = str(output_seq[0])
-                        for i in range(1,len(output_seq)):
-                            output = output + " " + str(output_seq[i])
-                        if output in split_dict.keys():
-                            split_dict[output].add(f)
-                        else:
-                            split_dict[output] = {f}
-                    
-                    for new_part in split_dict.values():
-                        new_partition.append(new_part)
-                    
+                    break     
                 except Exception as e:
                     raise SystemExit('Could not distinguish the given machines.')
+        new_partition = []
+        
+        for fsm_set in partition:
+            if len(fsm_set) == 1:
+                new_partition.append(fsm_set)
+            else:
+                split_dict : dict[str,set] = {}
+                for f in fsm_set:
+                    output_seq = f.compute_output_seq(f.initial_state,sequences[-1])
+                    output = str(output_seq[0])
+                    for i in range(1,len(output_seq)):
+                        output = output + " " + str(output_seq[i])
+                    if output in split_dict.keys():
+                        split_dict[output].add(f)
+                    else:
+                        split_dict[output] = {f}
+                for new_part in split_dict.values():
+                    new_partition.append(new_part)
+        
         partition = new_partition
     return sequences
                 
