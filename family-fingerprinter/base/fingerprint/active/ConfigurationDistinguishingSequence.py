@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractclassmethod
 import copy
 from base.FFSM.FFSM import FFSM
 
@@ -18,19 +18,34 @@ def id_in_list(id, list):
 
 class ConfigurationDistinguishingSequence(ABC):
 
-    def __init__(self, ffsm : FFSM) -> None:
-        self.ffsm : FFSM = ffsm
-        self.exists : bool = False
-        self.configuration_ss : nx.MultiDiGraph = None
-        self.root = None
-        self._calculate_graph()
-        print(self.exists)
-        if self.exists:
-            self._parse_distinguishing_sequence()
-            nx.drawing.nx_agraph.write_dot(self.seperating_sequence,"CDS.dot")
+    def __init__(self, ffsm : FFSM = None, ds : nx.MultiDiGraph = None) -> None:
+        if ffsm is None and ds is None:
+            SystemExit("Give either a FFSM or a distinguishing sequence")
+        elif ffsm is not None:
+            self.ffsm : FFSM = ffsm
+            self.exists : bool = False
+            self.configuration_ss : nx.MultiDiGraph = None
+            self.root = None
+            self._calculate_graph()
+            print(self.exists)
+            if self.exists:
+                self._parse_distinguishing_sequence()
+                nx.drawing.nx_agraph.write_dot(self.seperating_sequence,"CDS.dot")
+        else:
+            self.seperating_sequence = ds
+            self.exists = True
+            for node in self.seperating_sequence.nodes:
+                if self.seperating_sequence.in_degree(node) == 0:
+                    self.root = node
+                    break
+            
 
     @abstractmethod
     def _calculate_graph(self) -> None:
+        pass
+
+    @abstractclassmethod
+    def from_file(self, file : str) -> 'ConfigurationDistinguishingSequence':
         pass
 
     def _parse_distinguishing_sequence(self) -> None:

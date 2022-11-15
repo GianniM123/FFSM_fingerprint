@@ -30,9 +30,14 @@ class Option:
 
 class CADS(ConfigurationDistinguishingSequence):
 
-    def __init__(self, ffsm: FFSM) -> None:
-        super().__init__(ffsm)
+    def __init__(self, ffsm : FFSM = None, ds : nx.MultiDiGraph = None ) -> None:
+        super().__init__(ffsm=ffsm, ds=ds)
     
+    @classmethod
+    def from_file(self, file : str) -> ConfigurationDistinguishingSequence:
+        ds = nx.drawing.nx_agraph.read_dot(file)
+        return CADS(ds=ds)
+
     def _calculate_graph(self):
         self.ffsm.reset_to_initial_state()
         seen_states = []
