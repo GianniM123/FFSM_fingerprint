@@ -3,7 +3,6 @@ from aalpy.automata import MealyMachine
 
 
 def fingerprint_system(sut : MealySUL, fsms : list[MealyMachine], sequences : list[list[str]]) -> MealyMachine:
-
     for sequence in sequences:
         sut.pre()
         output = str(sut.step(sequence[0]))

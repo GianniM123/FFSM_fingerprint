@@ -142,8 +142,9 @@ class CADS(ConfigurationDistinguishingSequence):
         nodes = copy.deepcopy(self.graph.nodes.data())
         for node in nodes:
             if node[0] != self.root:
-                if not nx.has_path(self.graph,self.root,node[0]):
+                if self.graph.in_degree(node[0]) == 0:
                     self.graph.remove_node(node[0])
+                    rerun = True
                 elif self.graph.out_degree(node[0]) == 0 and len(node[1]["label"]) != 1:
                     self.graph.remove_node(node[0])
                     rerun = True
@@ -171,8 +172,9 @@ class CADS(ConfigurationDistinguishingSequence):
             nodes = copy.deepcopy(self.graph.nodes.data())
             for node in nodes:
                 if node[0] != self.root:
-                    if not nx.has_path(self.graph,self.root,node[0]):
+                    if self.graph.in_degree(node[0]) == 0:
                         self.graph.remove_node(node[0])
+                        rerun = True
                     elif self.graph.out_degree(node[0]) == 0 and len(node[1]["label"]) != 1:
                         self.graph.remove_node(node[0])
                         rerun = True

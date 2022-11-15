@@ -58,7 +58,7 @@ def main():
         end_time = datetime.now()
         diff_time = (end_time - begin_time).total_seconds()
         print("calculation costs: ", diff_time, " seconds")
-
+        print(sequences)
         variant = fingerprint_system(sul_fsm,fsms,sequences)
         for file, fsm in names:
             if variant == fsm:
