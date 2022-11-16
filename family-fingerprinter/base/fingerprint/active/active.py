@@ -1,5 +1,7 @@
 from aalpy.SULs.AutomataSUL import MealySUL
 from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence
+from base.FFSM.FFSM import RESET_IN, RESET_OUT
+
 
 
 class Simulator:
@@ -14,7 +16,12 @@ class Simulator:
             current_node = self.ds.root
             while self.ds.seperating_sequence.out_degree(current_node) > 0:
                 input = self.ds.seperating_sequence.nodes[current_node]["label"]
-                output = sul.step(input)
+                output = None
+                if input == RESET_IN:
+                    sul.pre()
+                    output = RESET_OUT
+                else:
+                    output = sul.step(input)
                 self.total_queries.append((input,output))
             	
                 found = False

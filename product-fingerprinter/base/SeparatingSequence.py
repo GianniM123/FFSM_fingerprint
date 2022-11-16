@@ -33,7 +33,7 @@ def find_separating_sequence(fsm1 : MealyMachine, fsm2 : MealyMachine) -> list[s
     raise SystemExit('Distinguishing sequence could not be computed.')
 
 
-def calculate_fingerpint_sequences(fsms : list[MealyMachine]) -> list[list[str]]:
+def calculate_fingerpint_sequences(fsms : list[MealyMachine], with_reset = True) -> list[list[str]]:
     partition = [set(fsms)]
     sequences : list[list[str]] = []
     while len(partition) != len(fsms):
@@ -43,7 +43,11 @@ def calculate_fingerpint_sequences(fsms : list[MealyMachine]) -> list[list[str]]
                 fsm1 = list_set[0]
                 fsm2 = list_set[1]
                 try:
-                    seq = find_separating_sequence(fsm1,fsm2)
+                    seq = None
+                    if with_reset:
+                        seq = find_separating_sequence(fsm1,fsm2)
+                    else:
+                        seq = split_without_reset(fsm1,fsm2)
                     sequences.append(seq)
                     break     
                 except Exception as e:

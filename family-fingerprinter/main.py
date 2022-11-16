@@ -5,7 +5,7 @@ from aalpy.SULs.AutomataSUL import MealySUL
 from aalpy.utils.FileHandler import load_automaton_from_file
 from aalpy.automata import MealyMachine
 
-from base.FFSM.FFSM import FFSM
+from base.FFSM.FFSM import FFSM, RESET_OUT, RESET_IN
 from base.fingerprint.passive.passive import trace_fingerprinting
 from base.fingerprint.passive.filehandler import read_traces
 from base.fingerprint.active.active import Simulator
@@ -22,9 +22,8 @@ def reset_when_sink(fsm : MealyMachine):
                 is_sink = False
                 break
         if is_sink:
-            state.transitions['RESET-SYS'] = fsm.initial_state
-            state.output_fun['RESET-SYS'] = 'epsilon'
-
+            state.transitions[RESET_IN] = fsm.initial_state
+            state.output_fun[RESET_IN] = RESET_OUT
 
 
 
@@ -32,10 +31,10 @@ def main():
     active_mode = None
     ffsm_file = None
     file = None
-    adaptive = None
+    mode = None
     sequence_file = None
     try:
-        arguments = getopt.getopt(sys.argv[1:],"p:f:a:",["passive=", "FFSM=", "active=", "preset", "adaptive", "sequence="])
+        arguments = getopt.getopt(sys.argv[1:],"p:f:a:",["passive=", "FFSM=", "active=", "preset", "adaptive", "shulee", "sequence="])
         for current_arg, current_val in arguments[0]:
             if current_arg in ("-p", "--passive"):
                 if active_mode == None:
@@ -46,9 +45,11 @@ def main():
             elif current_arg in ("-f", "--FFSM"):
                 ffsm_file = current_val
             elif current_arg in ("--adaptive"):
-                adaptive = True
+                mode = 0
             elif current_arg in ("--preset"):
-                adaptive = False
+                mode = 1
+            elif current_arg in ("--shulee"):
+                mode = 2
             elif current_arg in ("--sequence"):
                 sequence_file = current_val
             elif current_arg in ("-a", "--active"):
@@ -68,7 +69,7 @@ def main():
         traces = read_traces(file)
         possible_variants = trace_fingerprinting(ffsm, traces)
         print("variant: ", possible_variants)
-    elif active_mode == True and adaptive is not None:
+    elif active_mode == True and mode is not None:
         ds : ConfigurationDistinguishingSequence = None
         missing_alphabet : set = None
         fsm = load_automaton_from_file(file,'mealy')
@@ -81,17 +82,17 @@ def main():
 
             ffsm.make_input_complete()
             begin_time = datetime.now()
-            if adaptive:
+            if mode == 0:
                 ds = CADS(ffsm=ffsm)
-            else:
+            elif mode == 1:
                 ds = CPDS(ffsm=ffsm)
             end_time = datetime.now()
             diff_time = (end_time - begin_time).total_seconds()
             print("calculation costs: ", diff_time, " seconds")
         else:
-            if adaptive:
+            if mode == 0:
                 ds = CADS.from_file(sequence_file)
-            else:
+            elif mode == 1:
                 ds = CPDS.from_file(sequence_file)
             inputs = set()
             for node in ds.seperating_sequence.nodes.data():

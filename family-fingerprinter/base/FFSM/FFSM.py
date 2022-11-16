@@ -1,5 +1,8 @@
 import networkx as nx
 
+RESET_IN = "RESET-SYS"
+RESET_OUT = "epsilon"
+
 def unify_features(current_variants : set[str], new_variants : set[str]) -> set[str]:
     if current_variants == set():
         return new_variants
@@ -127,8 +130,8 @@ class FFSM():
                             is_sink = False
                             break
                     if is_sink:
-                        self.alphabet.add('RESET-SYS')
-                        self.transitions.append(ConditionalTransition(state,self.initial_state, 'RESET-SYS', 'epsilon', {feature}))
+                        self.alphabet.add(RESET_IN)
+                        self.transitions.append(ConditionalTransition(state,self.initial_state, RESET_IN, RESET_OUT, {feature}))
 
 
 

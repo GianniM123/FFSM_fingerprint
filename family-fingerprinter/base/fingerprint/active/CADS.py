@@ -4,8 +4,8 @@ import string
  
 import networkx as nx
 
-from base.FFSM.FFSM import FFSM,  unify_features
-from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence, id_in_list, fresh_var
+from base.FFSM.FFSM import FFSM
+from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence, fresh_var
 
 
 

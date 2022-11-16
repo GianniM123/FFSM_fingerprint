@@ -15,6 +15,16 @@ def complete_fsm(fsm : MealyMachine, alphabet : set[str]):
         fsm.initial_state.transitions[a] = fsm.initial_state
         fsm.initial_state.output_fun[a] = 'epsilon'
 
+    for state in fsm.states:
+        is_sink = True
+        for out_state in state.transitions.values():
+            if out_state.state_id != state.state_id:
+                is_sink = False
+                break
+        if is_sink:
+            state.transitions['RESET-SYS'] = fsm.initial_state
+            state.output_fun['RESET-SYS'] = 'epsilon'
+
     fsm.make_input_complete()
 
 
@@ -54,7 +64,7 @@ def main():
         sul_fsm = MealySUL(fsm)
 
         begin_time = datetime.now()
-        sequences = calculate_fingerpint_sequences(fsms)
+        sequences = calculate_fingerpint_sequences(fsms,False)
         end_time = datetime.now()
         diff_time = (end_time - begin_time).total_seconds()
         print("calculation costs: ", diff_time, " seconds")
