@@ -1,5 +1,15 @@
+import copy
 from aalpy.automata import MealyMachine
 
+
+def split_without_reset(fsm1 : MealyMachine, fsm2 : MealyMachine) -> list[str]:
+    states = copy.deepcopy(fsm1.states) + copy.deepcopy(fsm2.states)
+    new_machine = MealyMachine(copy.deepcopy(fsm1.initial_state),states)
+    inputs = []
+    for i in new_machine.compute_characterization_set():
+        inputs.append(str(i[0]))
+    return inputs
+    
 
 def find_separating_sequence(fsm1 : MealyMachine, fsm2 : MealyMachine) -> list[str]:
     visited = set()
