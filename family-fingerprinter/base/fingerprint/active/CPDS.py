@@ -17,17 +17,9 @@ class Option:
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Option):
-            equal = True
-            for current_state_1 in self.ffsm.current_states:
-                match_found = False
-                for current_state_2 in other.ffsm.current_states:
-                    if current_state_1[0] == current_state_2[0] and current_state_1[1] == current_state_2[1]: #states are equal
-                        match_found = True
-                        break
-                equal = equal and match_found
             self.features.sort()
             other.features.sort()
-            return (self.features == other.features and equal) 
+            return (self.features == other.features and self.ffsm == other.ffsm) 
 
 
 class CPDS(ConfigurationDistinguishingSequence):
