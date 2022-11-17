@@ -4,7 +4,7 @@ import string
 
 import networkx as nx
 
-from base.FFSM.FFSM import FFSM
+from base.FFSM.FFSM import FFSM, ConditionalState
 from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence, id_in_list, fresh_var
 
 
@@ -12,14 +12,22 @@ from base.fingerprint.active.ConfigurationDistinguishingSequence import Configur
 @dataclass
 class Option:
     features: list[set[str]]
-    ffsm: FFSM
+    current_states: list[tuple[ConditionalState, set[str]]]
     sequence : list[tuple[set[str],list[tuple[str,str]]]]
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Option):
+            equal = True
+            for current_state_1 in self.current_states:
+                match_found = False
+                for current_state_2 in other.current_states:
+                    if current_state_1[0] == current_state_2[0] and current_state_1[1] == current_state_2[1]: #states are equal
+                        match_found = True
+                        break
+                equal = equal and match_found
             self.features.sort()
             other.features.sort()
-            return (self.features == other.features and self.ffsm == other.ffsm) 
+            return (self.features == other.features and equal) 
 
 
 class CPDS(ConfigurationDistinguishingSequence):
@@ -36,7 +44,7 @@ class CPDS(ConfigurationDistinguishingSequence):
         self.graph = nx.Graph()
         self.ffsm.reset_to_initial_state()
         seen_states = []
-        root = Option(list(self.ffsm.features),copy.deepcopy(self.ffsm), [(self.ffsm.features, [])])
+        root = Option(list(self.ffsm.features),self.ffsm.current_states, [(self.ffsm.features, [])])
         nr_features = len(self.ffsm.features)
         options = [root]
         names = []
@@ -49,10 +57,10 @@ class CPDS(ConfigurationDistinguishingSequence):
                 self.graph.add_node(id, label=to_discover.features)
             
             seen_states.append(to_discover)
-            for input in to_discover.ffsm.alphabet:
+            for input in sorted(self.ffsm.alphabet):
                 try:
-                    new_ffsm = copy.deepcopy(to_discover.ffsm)
-                    outputs = new_ffsm.step(input)
+                    self.ffsm.current_states = to_discover.current_states
+                    outputs = self.ffsm.step(input)
                     output_dict : dict[str, set] = {}
                     
                     count_features = 0
@@ -65,7 +73,7 @@ class CPDS(ConfigurationDistinguishingSequence):
                             output_dict[out] = output_dict[out].union(set(features))
                     if count_features != nr_features:
                         continue
-                    new_option = Option([],new_ffsm, []) 
+                    new_option = Option([],self.ffsm.current_states, []) 
                     for output, new_split_features in output_dict.items():
                         for splitted_features, sequence in to_discover.sequence:
                             features_intersection = new_split_features.intersection(splitted_features)

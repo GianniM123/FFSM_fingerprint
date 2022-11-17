@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 import copy
-import string
  
 import networkx as nx
 
-from base.FFSM.FFSM import FFSM
+from base.FFSM.FFSM import FFSM, ConditionalState
 from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence, fresh_var
 
 
@@ -12,12 +11,20 @@ from base.fingerprint.active.ConfigurationDistinguishingSequence import Configur
 @dataclass
 class Option:
     features: set[str]
-    ffsm: FFSM
+    current_states: list[tuple[ConditionalState, set[str]]]
     sequence : list[str]
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Option):
-            return (self.features == other.features and self.ffsm == other.ffsm) 
+            equal = True
+            for current_state_1 in self.current_states:
+                match_found = False
+                for current_state_2 in other.current_states:
+                    if current_state_1[0] == current_state_2[0] and current_state_1[1] == current_state_2[1]: #states are equal
+                        match_found = True
+                        break
+                equal = equal and match_found
+            return (self.features == other.features and equal) 
 
 
 class CADS(ConfigurationDistinguishingSequence):
@@ -33,7 +40,7 @@ class CADS(ConfigurationDistinguishingSequence):
     def _calculate_graph(self):
         self.ffsm.reset_to_initial_state()
         seen_states = []
-        root = Option(self.ffsm.features,copy.deepcopy(self.ffsm), [])
+        root = Option(self.ffsm.features,self.ffsm.current_states, [])
 
         options : list[Option] = []
         options.append(root)
@@ -47,8 +54,8 @@ class CADS(ConfigurationDistinguishingSequence):
             seen_states.append(to_discover)
             for input in sorted(self.ffsm.alphabet):
                 try:
-                    new_ffsm = copy.deepcopy(to_discover.ffsm)
-                    outputs = new_ffsm.step(input)
+                    self.ffsm.current_states = to_discover.current_states
+                    outputs = self.ffsm.step(input)
                     output_dict : dict[str, set] = {}
                     counter = 0
                     for out, features in outputs:
@@ -61,9 +68,9 @@ class CADS(ConfigurationDistinguishingSequence):
                     if counter != len(to_discover.features):
                         continue
                     for output, features  in output_dict.items():
-                        step_ffsm = copy.deepcopy(to_discover.ffsm)
-                        step_ffsm.step(input,features)
-                        new_option = Option(features,step_ffsm, to_discover.sequence  + [input + "/" + output])
+                        self.ffsm.current_states = to_discover.current_states
+                        self.ffsm.step(input,features)
+                        new_option = Option(features,self.ffsm.current_states, to_discover.sequence  + [input + "/" + output])
 
                         if len(new_option.features) == 1:
                             seen_states.append(new_option)

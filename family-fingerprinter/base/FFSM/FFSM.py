@@ -159,6 +159,7 @@ class FFSM():
 
 
     def reset_to_initial_state(self) -> None:
-        self.current_states = [(self.initial_state, self.features)]
+        self.current_states : list[tuple[ConditionalState, set[str]]] = [(self.initial_state, self.features)]
+ 
 
 
