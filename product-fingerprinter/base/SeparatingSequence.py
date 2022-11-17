@@ -1,15 +1,32 @@
 import copy
-from aalpy.automata import MealyMachine
+from aalpy.automata import MealyMachine, MealyState
+
+# def is_input_valid(states : frozenset[MealyState], input : str) -> bool:
+#     reachable_states = set()
+#     for state in states:
+#         reachable_state = state.transitions[input]
+#         if reachable_state in reachable_states:
+#             return False
+#         else:
+#             reachable_states.add(reachable_state)
+#     return True
+
+# def split_without_reset(fsm1 : MealyMachine, fsm2 : MealyMachine) -> list[str]:
+#     states = copy.deepcopy(fsm1.states) + copy.deepcopy(fsm2.states)
+#     new_machine = MealyMachine(copy.deepcopy(fsm1.initial_state),states)
+
+#     to_explore = [({frozenset(states)},[])]
+#     alphabet = new_machine.get_input_alphabet()
+
+#     while to_explore:
+#         (set_states, prefix) = to_explore.pop(0) 
+#         for input in alphabet:
+#             is_valid = True
+#             for states in set_states:
+#                 is_valid = is_valid and is_input_valid(states,input)
+#             if is_valid:
 
 
-def split_without_reset(fsm1 : MealyMachine, fsm2 : MealyMachine) -> list[str]:
-    states = copy.deepcopy(fsm1.states) + copy.deepcopy(fsm2.states)
-    new_machine = MealyMachine(copy.deepcopy(fsm1.initial_state),states)
-    inputs = []
-    for i in new_machine.compute_characterization_set():
-        inputs.append(str(i[0]))
-    return inputs
-    
 
 def find_separating_sequence(fsm1 : MealyMachine, fsm2 : MealyMachine) -> list[str]:
     visited = set()
@@ -33,7 +50,7 @@ def find_separating_sequence(fsm1 : MealyMachine, fsm2 : MealyMachine) -> list[s
     raise SystemExit('Distinguishing sequence could not be computed.')
 
 
-def calculate_fingerpint_sequences(fsms : list[MealyMachine], with_reset = True) -> list[list[str]]:
+def calculate_fingerpint_sequences(fsms : list[MealyMachine]) -> list[list[str]]:
     partition = [set(fsms)]
     sequences : list[list[str]] = []
     while len(partition) != len(fsms):
@@ -43,11 +60,7 @@ def calculate_fingerpint_sequences(fsms : list[MealyMachine], with_reset = True)
                 fsm1 = list_set[0]
                 fsm2 = list_set[1]
                 try:
-                    seq = None
-                    if with_reset:
-                        seq = find_separating_sequence(fsm1,fsm2)
-                    else:
-                        seq = split_without_reset(fsm1,fsm2)
+                    seq = find_separating_sequence(fsm1,fsm2)
                     sequences.append(seq)
                     break     
                 except Exception as e:

@@ -17,6 +17,8 @@ class ConditionalState():
     def __init__(self, state_id : str, features : set[str]):
         self.state_id = state_id
         self.features = features
+        self.transitions : dict[str,dict[frozenset[str],ConditionalState]] = {}
+        self.outputs : dict[str,dict[frozenset[str],str]] = {}
 
     def __eq__(self, other) -> bool:
         if isinstance(other,ConditionalState):
@@ -26,34 +28,18 @@ class ConditionalState():
     def __str__(self) -> str:
         return "(" + self.state_id + ", " + self.features.__str__() + ")"
 
-class ConditionalTransition():
-
-    def __init__(self, from_state: ConditionalState, to_state: ConditionalState, input : str, output : str, features : set[str]):
-        self.from_state = from_state
-        self.to_state = to_state
-        self.input = input
-        self.output = output
-        self.features = features
-    
-    def __str__(self) -> str:
-        return "(" + self.from_state.__str__() + ", " + self.to_state.__str__() + ", " + self.input + "/" + self.output + ", " + self.features.__str__() + ")"
-        
 
 class FFSM():
     
-    def __init__(self, transitions: list[ConditionalTransition], initial_state: ConditionalState, features : set[str]):
-        self.transitions = transitions
+    def __init__(self, states: list[ConditionalState], initial_state: ConditionalState, features : set[str]):
         self.initial_state = initial_state
         
-        self.states : list[ConditionalState] = []
-        self.features = features
         self.alphabet = set()
-        for transition in self.transitions:
-            if transition.from_state not in self.states:
-                self.states.append(transition.from_state)
-            if transition.to_state not in self.states:
-                self.states.append(transition.to_state)  
-            self.alphabet.add(transition.input)
+        self.states : list[ConditionalState] = states
+        for state in self.states:
+            for input in state.transitions.keys():
+                self.alphabet.add(input)
+        self.features = features
         self.reset_to_initial_state()      
 
     @classmethod
@@ -62,26 +48,37 @@ class FFSM():
 
         all_features = set(ffsm.graph["configurations"].split("|"))
 
-        states = {}
+        states : dict[str,ConditionalState] = {}
+        all_states = []
         for state in ffsm.nodes.data():
             features = state[1]["feature"].split("|")
             if features[0] == "True":
                 features = all_features
-            states[state[0]] = ConditionalState(state[0],set(features))
+            if state[0] != "__start0":
+                new_state = ConditionalState(state[0],set(features))
+                states[state[0]] = new_state
+                all_states.append(new_state)
  
         initial_state = None
-        transitions = []
         for transition in ffsm.edges.data():
             if transition[0] == "__start0":
                 initial_state = states[transition[1]]
                 continue
             in_output = transition[2]["label"].split("/")
             features = set(transition[2]["feature"].split("|"))
-            transitions.append(ConditionalTransition(states[transition[0]], states[transition[1]], in_output[0].replace(" ", ""), in_output[1].replace(" ", ""),features))
+            input = in_output[0].replace(" ", "")
+            output = in_output[1].replace(" ", "")
+
+            if input not in states[transition[0]].transitions.keys():
+                states[transition[0]].outputs[input] = {frozenset(features) : output}
+                states[transition[0]].transitions[input] = {frozenset(features) : states[transition[1]]}
+            else:
+                states[transition[0]].outputs[input][frozenset(features)] = output
+                states[transition[0]].transitions[input][frozenset(features)] = states[transition[1]]
         
         
         
-        return FFSM(transitions, initial_state, all_features)
+        return FFSM(all_states, initial_state, all_features)
         
     def __str__(self) -> str:
         output = ""
@@ -89,18 +86,32 @@ class FFSM():
             output = output + transition.__str__()
         return output
 
+    def __eq__(self, other) -> bool:
+        if isinstance(other, FFSM):
+            equal = True
+            for current_state_1 in self.current_states:
+                match_found = False
+                for current_state_2 in other.current_states:
+                    if current_state_1[0] == current_state_2[0] and current_state_1[1] == current_state_2[1]: #states are equal
+                        match_found = True
+                        break
+                equal = equal and match_found
+            return equal and self.alphabet == other.alphabet and self.features == other.features and self.initial_state == other.initial_state and self.states == other.states
+
+
     def step(self, input : str, features_in : set[str] = set()) -> list[(str, set[str])]:
         new_current_states = []
         outputs = []
         for current_state, feature_config in self.current_states:
             features = unify_features(feature_config, features_in)
             if len(features) > 0 or (features == [] and feature_config == []):
-                transitions = self.outgoing_transitions_of(current_state)
-                for transition in transitions:
-                    feature_config_transition = unify_features(features,transition.features)
-                    if transition.input == input and len(feature_config_transition) > 0:
-                        new_current_states.append((transition.to_state, feature_config_transition))
-                        outputs.append((transition.output, feature_config_transition))
+                transitions = current_state.transitions[input]
+                for transition_features, new_state in transitions.items():
+                    feature_config_transition = unify_features(features,transition_features)
+                    if len(feature_config_transition) > 0:
+                        new_current_states.append((new_state, feature_config_transition))
+                        outputs.append((current_state.outputs[input][transition_features], feature_config_transition))                        
+                        
         if new_current_states == []:
             raise Exception("Invalid input: ", input, " given the features: ", features)
         else:
@@ -112,42 +123,42 @@ class FFSM():
             input_dict = {}
             for input in self.alphabet:
                 input_dict[input] = set()
-            for edge in self.outgoing_transitions_of(state):
-                input_dict[edge.input] = input_dict[edge.input].union(edge.features)
-            
+                if input in state.transitions.keys():
+                    for features in state.transitions[input].keys():
+                        input_dict[input] = input_dict[input].union(features)
+
             for input, features in input_dict.items():
                 feature_diff = state.features.difference(features)
                 if len(feature_diff) > 0:
-                    self.transitions.append(ConditionalTransition(state,state,input,'epsilon',feature_diff))
+                    if input not in state.transitions.keys():
+                        state.transitions[input] = {frozenset(feature_diff) : state}
+                        state.outputs[input] = {frozenset(feature_diff) : 'epsilon'}
+                    else:
+                        state.transitions[input][frozenset(feature_diff)] = state
+                        state.outputs[input][frozenset(feature_diff)] = 'epsilon'
+                        
 
     def reset_when_sink(self):
         for feature in self.features:
             for state in self.states:
                 if feature in state.features:
                     is_sink = True
-                    for edge in self.outgoing_transitions_of(state):
-                        if feature in edge.features and edge.to_state != state:
-                            is_sink = False
-                            break
+                    for edge_dict in state.transitions.values():
+                        for features, to_state in edge_dict.items():
+                            if feature in features and to_state != state:
+                                is_sink = False
+                                break
                     if is_sink:
                         self.alphabet.add(RESET_IN)
-                        self.transitions.append(ConditionalTransition(state,self.initial_state, RESET_IN, RESET_OUT, {feature}))
-
+                        if RESET_IN not in state.transitions.keys():
+                            state.transitions[RESET_IN] = {frozenset({feature}) : self.initial_state}
+                            state.outputs[RESET_IN] = {frozenset({feature}) : RESET_OUT}
+                        else:
+                            state.transitions[RESET_IN][frozenset({feature})] = self.initial_state
+                            state.outputs[RESET_IN][frozenset({feature})] = RESET_OUT
 
 
     def reset_to_initial_state(self) -> None:
         self.current_states = [(self.initial_state, self.features)]
 
-    def incoming_transitions_of(self, state : ConditionalState) -> list[ConditionalTransition]:
-        incoming_transitions = []
-        for transition in self.transitions:
-            if transition.to_state == state:
-                incoming_transitions.append(transition)
-        return incoming_transitions
 
-    def outgoing_transitions_of(self, state : ConditionalState) -> list[ConditionalTransition]:
-        outgoing_transitions = []
-        for transition in self.transitions:
-            if transition.from_state == state:
-                outgoing_transitions.append(transition)
-        return outgoing_transitions

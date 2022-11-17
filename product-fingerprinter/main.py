@@ -11,19 +11,28 @@ from base.SeparatingSequence import calculate_fingerpint_sequences
 from base.fingerprint import fingerprint_system
 
 def complete_fsm(fsm : MealyMachine, alphabet : set[str]):
-    for a in alphabet.difference(set(fsm.get_input_alphabet())): #for the non exisiting alphabet add a self loop on the initial state, make_input_complete() will do the rest
-        fsm.initial_state.transitions[a] = fsm.initial_state
-        fsm.initial_state.output_fun[a] = 'epsilon'
-
+    to_remove = []
+    for state in fsm.states:
+        if state.state_id == None and state.transitions == {}: #somehow there exists a node with no transitions and no name
+            to_remove.append(state)
+    for i in to_remove:
+        fsm.states.remove(i)
+    
     for state in fsm.states:
         is_sink = True
         for out_state in state.transitions.values():
-            if out_state.state_id != state.state_id:
+            if out_state != state:
                 is_sink = False
-                break
+                break        
         if is_sink:
+
             state.transitions['RESET-SYS'] = fsm.initial_state
             state.output_fun['RESET-SYS'] = 'epsilon'
+
+    for a in alphabet.difference(set(fsm.get_input_alphabet())): #for the non exisiting alphabet add a self loop on the initial state, make_input_complete() will do the rest
+        fsm.initial_state.transitions[a] = fsm.initial_state
+        fsm.initial_state.output_fun[a] = 'epsilon'
+    
 
     fsm.make_input_complete()
 
@@ -64,7 +73,7 @@ def main():
         sul_fsm = MealySUL(fsm)
 
         begin_time = datetime.now()
-        sequences = calculate_fingerpint_sequences(fsms,False)
+        sequences = calculate_fingerpint_sequences(fsms)
         end_time = datetime.now()
         diff_time = (end_time - begin_time).total_seconds()
         print("calculation costs: ", diff_time, " seconds")

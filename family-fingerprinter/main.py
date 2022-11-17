@@ -11,6 +11,7 @@ from base.fingerprint.passive.filehandler import read_traces
 from base.fingerprint.active.active import Simulator
 from base.fingerprint.active.CADS import CADS
 from base.fingerprint.active.CPDS import CPDS
+from base.fingerprint.active.ShuLeeReset import ShuLeeReset
 from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence
 
 
@@ -18,7 +19,7 @@ def reset_when_sink(fsm : MealyMachine):
     for state in fsm.states:
         is_sink = True
         for out_state in state.transitions.values():
-            if out_state.state_id != state.state_id:
+            if out_state != state:
                 is_sink = False
                 break
         if is_sink:
@@ -78,14 +79,16 @@ def main():
             ffsm = FFSM.from_file(ffsm_file)
             ffsm.reset_when_sink()
 
-            missing_alphabet = set(ffsm.alphabet).difference(set(fsm.get_input_alphabet()))
-
+            missing_alphabet = ffsm.alphabet.difference(set(fsm.get_input_alphabet()))
+            ffsm.reset_to_initial_state()
             ffsm.make_input_complete()
             begin_time = datetime.now()
             if mode == 0:
                 ds = CADS(ffsm=ffsm)
             elif mode == 1:
                 ds = CPDS(ffsm=ffsm)
+            elif mode == 2:
+                ds = ShuLeeReset(ffsm=ffsm)
             end_time = datetime.now()
             diff_time = (end_time - begin_time).total_seconds()
             print("calculation costs: ", diff_time, " seconds")
@@ -94,6 +97,8 @@ def main():
                 ds = CADS.from_file(sequence_file)
             elif mode == 1:
                 ds = CPDS.from_file(sequence_file)
+            elif mode == 2:
+                ds = ShuLeeReset.from_file(sequence_file)
             inputs = set()
             for node in ds.seperating_sequence.nodes.data():
                 if ds.seperating_sequence.out_degree(node[0]) > 0:

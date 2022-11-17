@@ -96,7 +96,6 @@ class CPDS(ConfigurationDistinguishingSequence):
                             options = []
                             self.exists = True
                             
-                            self.configuration_ss = nx.MultiDiGraph()
                             self.root = "a"
                             self.configuration_ss.add_node(self.root, label=self.ffsm.features)
                             count = 0
