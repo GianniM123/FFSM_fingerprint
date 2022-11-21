@@ -137,5 +137,5 @@ def build_distinguishing_graph(sequences : list[list[str]], machines : dict[Meal
         else:
             node[1]["label"] = machines[list(node[1]["label"])[0]]  
 
-    nx.drawing.nx_agraph.write_dot(distinguishing_graph,"CDS.dot")
+    nx.drawing.nx_agraph.write_dot(distinguishing_graph,"sequence.dot")
     return distinguishing_graph
