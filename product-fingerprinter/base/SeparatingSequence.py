@@ -3,7 +3,7 @@ from aalpy.automata import MealyMachine
 def find_separating_sequence(fsm1 : MealyMachine, fsm2 : MealyMachine) -> list[str]:
     visited = set()
     to_explore = [(fsm1.initial_state, fsm2.initial_state, [])]
-    alphabet = fsm1.get_input_alphabet()
+    alphabet = set(fsm1.get_input_alphabet()).intersection(set(fsm2.get_input_alphabet()))
     while to_explore:
         (curr_s1, curr_s2, prefix) = to_explore.pop(0)
         visited.add((curr_s1, curr_s2))
