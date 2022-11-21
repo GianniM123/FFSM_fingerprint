@@ -26,30 +26,25 @@ def main():
         return
     
     if folder is not None and sut is not None:
-        fsms : list[MealyMachine] = []
-        names : list[tuple[str,MealyMachine]]= []
+        names : dict[MealyMachine, str] = {}
         for path, _, files in os.walk(folder):
             if path == folder:
                 for file in files:
                     p = os.path.join(path,file)
                     fsm = load_automaton_from_file(p,'mealy')
-                    names.append((file,fsm))
-                    fsms.append(fsm)
+                    names[fsm] = file
  
         fsm = load_automaton_from_file(sut,'mealy')
         
         sul_fsm = MealySUL(fsm)
 
         begin_time = datetime.now()
-        sequences = calculate_fingerpint_sequences(fsms)
+        distinguish_graph = calculate_fingerpint_sequences(names)
         end_time = datetime.now()
         diff_time = (end_time - begin_time).total_seconds()
         print("calculation costs: ", diff_time, " seconds")
-        print(sequences)
-        variant = fingerprint_system(sul_fsm,fsms,sequences)
-        for file, fsm in names:
-            if variant == fsm:
-                print("variant: ", file)
+        variant = fingerprint_system(sul_fsm,distinguish_graph)
+        print("variant: ", variant)
                 
 
 

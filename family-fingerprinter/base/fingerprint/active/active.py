@@ -10,7 +10,7 @@ class Simulator:
         self.ds = ds
 
       
-    def _ds_fingerprint(self, sul : MealySUL) -> set[str]:
+    def _ds_fingerprint(self, sul : MealySUL) -> str:
         self.total_queries = []
         if self.ds.exists == True:
             current_node = self.ds.root
@@ -31,16 +31,18 @@ class Simulator:
                         found = True
                         break
                 if not found:
-                    return set()
+                    return ""
 
             return self.ds.seperating_sequence.nodes[current_node]["label"]
         else:
-            return set()
+            return ""
 
 
-    def fingerprint_system(self, sul : MealySUL) -> set[str]:
-        features = self._ds_fingerprint(sul)
-        print(self.total_queries)
-        return features
+    def fingerprint_system(self, sul : MealySUL) -> str:
+        config = self._ds_fingerprint(sul)
+        print("nr of inputs: ", len(self.total_queries))
+        only_reset = list(filter(lambda x : x[0] == RESET_IN, self.total_queries))
+        print("nr of resets: ", len(only_reset))
+        return config
 
 

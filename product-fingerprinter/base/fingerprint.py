@@ -1,25 +1,38 @@
+import networkx as nx
 from aalpy.SULs.AutomataSUL import MealySUL
 from aalpy.automata import MealyMachine
+from base.SeparatingSequence import RESET_IN, RESET_OUT
 
+def fingerprint_system(sut : MealySUL, distinguishing_graph : nx.MultiDiGraph) -> MealyMachine:
+    total_queries = []
 
-def fingerprint_system(sut : MealySUL, fsms : list[MealyMachine], sequences : list[list[str]]) -> MealyMachine:
-    for sequence in sequences:
-        sut.pre()
-        output = str(sut.step(sequence[0]))
-        for i in range(1,len(sequence)):
-            output = output + " " + str(sut.step(sequence[i]))
-        new_fsms = []
-        for fsm in fsms:
-            output_seq = fsm.compute_output_seq(fsm.initial_state,sequence)
-            output_candidate = str(output_seq[0])
-            for i in range(1,len(output_seq)):
-                output_candidate = output_candidate + " " + str(output_seq[i])
-            if output_candidate == output:
-                new_fsms.append(fsm)
-        fsms = new_fsms
-        sut.post()
-    if len(fsms) == 1:
-        return fsms[0]
-    else:
-        raise SystemExit('Unable to fingerprint the system')
+    current_node = None
+    for node in distinguishing_graph.nodes():
+        if distinguishing_graph.in_degree(node) == 0:
+            current_node = node
+            break
+
+    while distinguishing_graph.out_degree(current_node) > 0:
+        input = distinguishing_graph.nodes[current_node]["label"]
+        output = None
+        if input == RESET_IN:
+            sut.pre()
+            output = RESET_OUT
+        else:
+            output = sut.step(input)
+        total_queries.append((input,output))
+        
+        found = False
+        for edge in distinguishing_graph.out_edges(current_node, data=True):
+            if edge[2]["label"] == str(output):
+                current_node = edge[1]
+                found = True
+                break
+        if not found:
+            return set()
+    print("nr of inputs: ", len(total_queries))
+    only_reset = list(filter(lambda x : x[0] == RESET_IN, total_queries))
+    print("nr of resets: ", len(only_reset))
+    
+    return distinguishing_graph.nodes[current_node]["label"]
 
