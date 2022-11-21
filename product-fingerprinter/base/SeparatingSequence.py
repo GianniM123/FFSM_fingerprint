@@ -1,32 +1,4 @@
-import copy
-from aalpy.automata import MealyMachine, MealyState
-
-# def is_input_valid(states : frozenset[MealyState], input : str) -> bool:
-#     reachable_states = set()
-#     for state in states:
-#         reachable_state = state.transitions[input]
-#         if reachable_state in reachable_states:
-#             return False
-#         else:
-#             reachable_states.add(reachable_state)
-#     return True
-
-# def split_without_reset(fsm1 : MealyMachine, fsm2 : MealyMachine) -> list[str]:
-#     states = copy.deepcopy(fsm1.states) + copy.deepcopy(fsm2.states)
-#     new_machine = MealyMachine(copy.deepcopy(fsm1.initial_state),states)
-
-#     to_explore = [({frozenset(states)},[])]
-#     alphabet = new_machine.get_input_alphabet()
-
-#     while to_explore:
-#         (set_states, prefix) = to_explore.pop(0) 
-#         for input in alphabet:
-#             is_valid = True
-#             for states in set_states:
-#                 is_valid = is_valid and is_input_valid(states,input)
-#             if is_valid:
-
-
+from aalpy.automata import MealyMachine
 
 def find_separating_sequence(fsm1 : MealyMachine, fsm2 : MealyMachine) -> list[str]:
     visited = set()
@@ -72,15 +44,24 @@ def calculate_fingerpint_sequences(fsms : list[MealyMachine]) -> list[list[str]]
                 new_partition.append(fsm_set)
             else:
                 split_dict : dict[str,set] = {}
+                need_to_add = set()
                 for f in fsm_set:
-                    output_seq = f.compute_output_seq(f.initial_state,sequences[-1])
-                    output = str(output_seq[0])
-                    for i in range(1,len(output_seq)):
-                        output = output + " " + str(output_seq[i])
-                    if output in split_dict.keys():
-                        split_dict[output].add(f)
-                    else:
-                        split_dict[output] = {f}
+                    try:
+                        output_seq = f.compute_output_seq(f.initial_state,sequences[-1])
+                        output = str(output_seq[0])
+                        for i in range(1,len(output_seq)):
+                            output = output + " " + str(output_seq[i])
+                        if output in split_dict.keys():
+                            split_dict[output].add(f)
+                        else:
+                            split_dict[output] = {f}
+                    except:
+                        #input not defined for fsm
+                        need_to_add.add(f)
+                for add in need_to_add:
+                    for key in split_dict.keys():
+                        split_dict[key].add(add)
+
                 for new_part in split_dict.values():
                     new_partition.append(new_part)
         
