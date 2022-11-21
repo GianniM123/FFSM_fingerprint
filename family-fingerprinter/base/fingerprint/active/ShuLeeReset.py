@@ -1,5 +1,4 @@
 import networkx as nx
-import copy
 
 from base.FFSM.FFSM import FFSM, RESET_IN, RESET_OUT
 from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence, fresh_var
@@ -76,35 +75,48 @@ class ShuLeeReset(ConfigurationDistinguishingSequence):
                         new_partition.append(new_part)
             
             partition = new_partition
+
         self.exists = True
         self.root = fresh_var(0)
         counter = 1
         self.configuration_ss.add_node(self.root, label=self.ffsm.features)
         current_nodes = [self.root]
         for sequence in sequences:
-            new_current_nodes = []
+            new_current_nodes = set()
             for current_node in current_nodes:
-                current_selected_node = current_node
                 self.ffsm.reset_to_initial_state()
+                output_dict : dict[str, list[str]] = {}
                 for input in sequence:
                     output_list = self.ffsm.step(input, self.configuration_ss.nodes[current_node]["label"])
-                    output_dict : dict[str, set] = {}
                     for out, features in output_list:
-                        if out not in output_dict.keys():
-                            output_dict[out] = set(features)
-                        else:
-                            output_dict[out] = output_dict[out].union(set(features))
-                    new_node = None
-                    for output, configurations in output_dict.items():
-                        if current_selected_node in new_current_nodes:
-                            new_current_nodes.remove(current_selected_node)
-                        new_node = fresh_var(counter)
-                        counter = counter + 1
-                        self.configuration_ss.add_node(new_node, label=configurations)
-                        self.configuration_ss.add_edge(current_selected_node,new_node, label=input + "/" + output)
-                        new_current_nodes.append(new_node)
-                    if len(output_dict.keys()) == 1:
-                        current_selected_node = new_node
+                        for feature in features:
+                            if feature not in output_dict.keys():
+                                output_dict[feature] = [out]
+                            else:
+                                output_dict[feature] = output_dict[feature] + [out]
+                
+
+                for feature, output in output_dict.items():
+                    current_selected_node = current_node
+                    for i in range(0,len(sequence)):
+                        found = False
+                        for edge in self.configuration_ss.out_edges(current_selected_node, data=True):
+                            if edge[2]["label"] == sequence[i] + "/" + output[i]:
+                                found = True
+                                self.configuration_ss.nodes[edge[1]]["label"].add(feature)
+                                current_selected_node = edge[1]
+                                break
+                        if not found:
+                            new_node = fresh_var(counter)
+                            counter = counter + 1
+                            self.configuration_ss.add_node(new_node, label={feature})
+                            self.configuration_ss.add_edge(current_selected_node,new_node, label=sequence[i] + "/" + output[i])
+                            current_selected_node = new_node
+                        
+                        if i == (len(sequence)-1):
+                            new_current_nodes.add(current_selected_node)
+            
+            
             current_nodes.clear()
             if sequence != sequences[-1]:
                 for node in new_current_nodes:
