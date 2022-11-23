@@ -15,7 +15,7 @@ if __name__ == "__main__":
     time_dict = {"number of versions" : [], "family" : [], "product" : []}
     for i in range(6,17):
         print("at nr: ", i)
-        for j in range(0,10):
+        for j in range(0,100):
             time_dict["number of versions"].append(i)
 
             process = subprocess.Popen(shlex.split(FAMILY.format(number=i, option="shulee")),stdout=subprocess.PIPE)
@@ -33,4 +33,4 @@ if __name__ == "__main__":
             time_dict["product"].append(time_product)
 
     df = pd.DataFrame.from_dict(time_dict) 
-    df.to_csv (r'bencmark_shu_lee.csv', index = False, header=True)
+    df.to_csv (r'benchmark_shu_lee.csv', index = False, header=True)
