@@ -77,6 +77,9 @@ class ShuLeeReset(ConfigurationDistinguishingSequence):
             partition = new_partition
 
         self.exists = True
+        self._build_graph(sequences)
+
+    def _build_graph(self, sequences : list[list[str]]) -> None:
         self.root = fresh_var(0)
         counter = 1
         self.configuration_ss.add_node(self.root, label=self.ffsm.features)

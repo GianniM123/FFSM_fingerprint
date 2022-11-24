@@ -13,7 +13,7 @@ PRODUCTS = "python3 ../product-fingerprinter/main.py --folder ../dot-files/opens
 
 if __name__ == "__main__":
     time_dict = {"number of versions" : [], "family" : [], "product" : []}
-    for i in range(6,17):
+    for i in range(2,17):
         print("at nr: ", i)
         for j in range(0,100):
             time_dict["number of versions"].append(i)
