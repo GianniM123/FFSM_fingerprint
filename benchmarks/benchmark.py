@@ -38,13 +38,14 @@ if __name__ == "__main__":
             index2 = "product" if sys.argv[1] == "shulee" else "preset"
             time_dict = {"number of versions" : [], index1 : [], index2 : []}
             max_itr = 17 if sys.argv[2] == "openssl" else 7
-            max_itr = max_itr if sys.argv[1] == "shulee" else 9
+            if sys.argv[1] != "shulee" and sys.argv[2] == "openssl":
+                max_itr = 8
             for i in range(2,max_itr):
                 ffsm = FFSM.format(version=sys.argv[2], number=i)
                 fsm = FSM.format(version=sys.argv[2])
                 folder = FOLDER.format(version=sys.argv[2], number=i)
                 print("at nr: ", i)
-                for j in range(0,1):
+                for j in range(0,20):
                     time_dict["number of versions"].append(i)
 
                     time1 = time2 = None

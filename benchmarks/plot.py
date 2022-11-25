@@ -21,7 +21,8 @@ if __name__ == "__main__":
 
       dataframe.boxplot(by='number of versions',ax=axs)
       for ax in axs:
-         ax.set_ylim((0,None))
+         ax.set_ylim((0,0.05))
+         ax.set_ylabel("Calculation time (s)")
          ax.set_xlabel("Number of versions")
       fig.suptitle("")
       plt.show()
