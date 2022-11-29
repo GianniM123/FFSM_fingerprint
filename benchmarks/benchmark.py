@@ -10,9 +10,9 @@ PRODUCTS = "python3 ../product-fingerprinter/main.py --folder={folder} --sut={fs
 
 
 
-FFSM = "../dot-files/{version}/combined/{version}-distinct_{number}.dot"
+FFSM = "../dot-files/{version}/combined/{type}/{version}-distinct_{number}.dot"
 FSM = "../dot-files/{version}/1.0.0-TLS10.dot"
-FOLDER = "../dot-files/{version}/distinct/{number}"
+FOLDER = "../dot-files/{version}/distinct/{type}/{number}"
 
 
 def get_time(process : subprocess.Popen):
@@ -32,32 +32,22 @@ def run_product_fingerprinter(folder,fsm) -> float:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 2:
-        if (sys.argv[2] == "openssl" or sys.argv[2] == "mbedtls") and (sys.argv[1] == "family" or sys.argv[1] == "shulee"):
-            index1 = "family" if sys.argv[1] == "shulee" else "adaptive"
-            index2 = "product" if sys.argv[1] == "shulee" else "preset"
-            time_dict = {"number of versions" : [], index1 : [], index2 : []}
-            max_itr = 17 if sys.argv[2] == "openssl" else 7
-            if sys.argv[1] != "shulee" and sys.argv[2] == "openssl":
-                max_itr = 8
-            for i in range(2,max_itr):
-                ffsm = FFSM.format(version=sys.argv[2], number=i)
-                fsm = FSM.format(version=sys.argv[2])
-                folder = FOLDER.format(version=sys.argv[2], number=i)
-                print("at nr: ", i)
-                for j in range(0,20):
-                    time_dict["number of versions"].append(i)
+    if len(sys.argv) > 1:
+        if (sys.argv[1] == "openssl" or sys.argv[1] == "mbedtls"):
+            time_dict = {"number of versions" : [], "family asc" : [], "product asc" : [], "family desc" : [], "product desc" : []}
+            for i in range(2,17):
+                    print("at nr: ", i)
+                    for j in range(0,100):
+                        time_dict["number of versions"].append(i)
+                        for sort in ["asc", "desc"]:
+                            ffsm = FFSM.format(version=sys.argv[1], type=sort, number=i)
+                            fsm = FSM.format(version=sys.argv[1])
+                            folder = FOLDER.format(version=sys.argv[1],type=sort, number=i)
 
-                    time1 = time2 = None
-                    if sys.argv[1] == "shulee":
-                        time1 = run_family_fingerprinter(ffsm,fsm,"shulee")
-                        time2 = run_product_fingerprinter(folder,fsm)
-                    else:
-                        time1 = run_family_fingerprinter(ffsm,fsm,index1)
-                        time2 = run_family_fingerprinter(ffsm,fsm,index2)
+                            time1 = run_family_fingerprinter(ffsm,fsm,"shulee")
+                            time2 = run_product_fingerprinter(folder,fsm)
 
-                    time_dict[index1].append(time1)
-                    time_dict[index2].append(time2)
-
-        df = pd.DataFrame.from_dict(time_dict) 
-        df.to_csv ('benchmark_' + sys.argv[1] + "_" + sys.argv[2] + '.csv', index = False, header=True)
+                            time_dict["family " + sort].append(time1)
+                            time_dict["product " + sort].append(time2)
+            df = pd.DataFrame.from_dict(time_dict) 
+            df.to_csv ('benchmark_shulee_' + sys.argv[1]  + '.csv', index = False, header=True)

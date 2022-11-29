@@ -52,7 +52,7 @@ class CADS(ConfigurationDistinguishingSequence):
             to_discover = options.pop(0)
       
             seen_states.append(to_discover)
-            for input in sorted(self.ffsm.alphabet):
+            for input in self.ffsm.alphabet:
                 try:
                     self.ffsm.current_states = to_discover.current_states
                     outputs = self.ffsm.step(input)

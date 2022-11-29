@@ -1,7 +1,8 @@
 import getopt
 import sys
 import os
-from datetime import datetime
+import timeit
+import networkx as nx
 
 from aalpy.SULs.AutomataSUL import MealySUL
 from aalpy.utils.FileHandler import load_automaton_from_file
@@ -38,11 +39,14 @@ def main():
         
         sul_fsm = MealySUL(fsm)
 
-        begin_time = datetime.now()
+        begin_time = timeit.default_timer()
         distinguish_graph = calculate_fingerpint_sequences(names)
-        end_time = datetime.now()
-        diff_time = (end_time - begin_time).total_seconds()
+        end_time = timeit.default_timer()
+        diff_time = end_time - begin_time
         print("calculation costs: ", diff_time, " seconds")
+
+        nx.drawing.nx_agraph.write_dot(distinguish_graph,"sequence.dot")
+
         variant = fingerprint_system(sul_fsm,distinguish_graph)
         print("variant: ", variant)
                 

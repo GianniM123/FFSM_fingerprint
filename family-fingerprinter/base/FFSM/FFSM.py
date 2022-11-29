@@ -113,7 +113,7 @@ class FFSM():
                         outputs.append((current_state.outputs[input][transition_features], feature_config_transition))                        
                         
         if new_current_states == []:
-            raise Exception("Invalid input: ", input, " given the features: ", features)
+            raise Exception("Invalid input: ", input, " given the state: ", self.current_states)
         else:
             self.current_states = new_current_states
         return outputs
@@ -158,8 +158,10 @@ class FFSM():
                             state.outputs[RESET_IN][frozenset({feature})] = RESET_OUT
 
 
-    def reset_to_initial_state(self) -> None:
-        self.current_states : list[tuple[ConditionalState, set[str]]] = [(self.initial_state, self.features)]
- 
+    def reset_to_initial_state(self, features : set[str] = None) -> None:
+        if features == None:
+            self.current_states : list[tuple[ConditionalState, set[str]]] = [(self.initial_state, self.features)]
+        else:
+            self.current_states : list[tuple[ConditionalState, set[str]]] = [(self.initial_state, features)]
 
 

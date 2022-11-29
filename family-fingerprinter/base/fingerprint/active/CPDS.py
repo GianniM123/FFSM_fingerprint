@@ -55,7 +55,7 @@ class CPDS(ConfigurationDistinguishingSequence):
                 self.graph.add_node(id, label=to_discover.features)
             
             seen_states.append(to_discover)
-            for input in sorted(self.ffsm.alphabet):
+            for input in self.ffsm.alphabet:
                 try:
                     self.ffsm.current_states = to_discover.current_states
                     outputs = self.ffsm.step(input)

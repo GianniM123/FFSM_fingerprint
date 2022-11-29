@@ -17,24 +17,21 @@ class ShuLeeReset(ConfigurationDistinguishingSequence):
 
     def _find_separating_sequence(self, config1 : str, config2 : str) -> list[str]:
         visited = []
-        self.ffsm.reset_to_initial_state()
-        to_explore = [(self.ffsm.current_states, self.ffsm.current_states, [])] 
+        self.ffsm.reset_to_initial_state({config1,config2})
+        to_explore = [(self.ffsm.current_states, [])] 
         while to_explore:
-            (curr1, curr2, prefix) = to_explore.pop(0)
-            visited.append((curr1,curr2))
+            (curr, prefix) = to_explore.pop(0)
+            visited.append(curr)
             for input in self.ffsm.alphabet:
-                self.ffsm.current_states = curr1
-                outputs1 = self.ffsm.step(input,{config1})
-                new_curr1 = self.ffsm.current_states
-                self.ffsm.current_states = curr2
-                outputs2 = self.ffsm.step(input, {config2})
-                new_curr2 = self.ffsm.current_states
+                self.ffsm.current_states = curr
+                outputs = self.ffsm.step(input)
+                new_curr = self.ffsm.current_states
                 new_prefix = prefix + [input]
-                if outputs1[0][0] != outputs2[0][0]:
-                    return new_prefix
-                else:
-                    if (new_curr1,new_curr2) not in visited:
-                        to_explore.append((new_curr1,new_curr2,new_prefix))
+                if len(outputs) > 1:
+                    if outputs[0][0] != outputs[1][0]:
+                        return new_prefix
+                if new_curr not in visited:
+                    to_explore.append((new_curr,new_prefix))
         raise SystemExit('Could not separate the given configurations.')
 
     def _calculate_graph(self):
@@ -62,9 +59,9 @@ class ShuLeeReset(ConfigurationDistinguishingSequence):
                     split_dict : dict[str,set] = {}
                     for config in config_set:
                         output = ""
-                        self.ffsm.reset_to_initial_state()
+                        self.ffsm.reset_to_initial_state({config})
                         for input in sequences[-1]:
-                            output_list = self.ffsm.step(input,{config})
+                            output_list = self.ffsm.step(input)
                             output = output + output_list[0][0]
 
                         if output in split_dict.keys():
@@ -75,7 +72,6 @@ class ShuLeeReset(ConfigurationDistinguishingSequence):
                         new_partition.append(new_part)
             
             partition = new_partition
-
         self.exists = True
         self._build_graph(sequences)
 
@@ -87,10 +83,10 @@ class ShuLeeReset(ConfigurationDistinguishingSequence):
         for sequence in sequences:
             new_current_nodes = set()
             for current_node in current_nodes:
-                self.ffsm.reset_to_initial_state()
+                self.ffsm.reset_to_initial_state(self.configuration_ss.nodes[current_node]["label"])
                 output_dict : dict[str, list[str]] = {}
                 for input in sequence:
-                    output_list = self.ffsm.step(input, self.configuration_ss.nodes[current_node]["label"])
+                    output_list = self.ffsm.step(input)
                     for out, features in output_list:
                         for feature in features:
                             if feature not in output_dict.keys():

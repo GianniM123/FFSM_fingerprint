@@ -27,10 +27,9 @@ class ConfigurationDistinguishingSequence(ABC):
             self.configuration_ss : nx.MultiDiGraph = nx.MultiDiGraph()
             self.root = None
             self._calculate_graph()
-            print(self.exists)
             if self.exists:
                 self._parse_distinguishing_sequence()
-                nx.drawing.nx_agraph.write_dot(self.seperating_sequence,"CDS.dot")
+                
         else:
             self.seperating_sequence = ds
             self.exists = True

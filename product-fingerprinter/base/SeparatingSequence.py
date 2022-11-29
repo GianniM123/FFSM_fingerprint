@@ -89,13 +89,7 @@ def build_distinguishing_graph(sequences : list[list[str]], machines : dict[Meal
         for current_node in current_nodes:
             output_dict : dict[MealyMachine, list[str]] = {}
             for machine in distinguishing_graph.nodes[current_node]["label"]:
-                machine.reset_to_initial()
-                for input in sequence:
-                    output = machine.step(input)
-                    if machine not in output_dict.keys():
-                        output_dict[machine] = [output]
-                    else:
-                        output_dict[machine] = output_dict[machine] + [output]
+                output_dict[machine] = machine.compute_output_seq(machine.initial_state,sequence)
         
 
             for machine, output in output_dict.items():
@@ -136,6 +130,4 @@ def build_distinguishing_graph(sequences : list[list[str]], machines : dict[Meal
                 edge[2]["label"] = output
         else:
             node[1]["label"] = machines[list(node[1]["label"])[0]]  
-
-    nx.drawing.nx_agraph.write_dot(distinguishing_graph,"sequence.dot")
     return distinguishing_graph
