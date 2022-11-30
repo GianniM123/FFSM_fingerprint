@@ -17,10 +17,11 @@ def plot(option : str):
       print(mean_std_frame)
       mean_std_frame = mean_std_frame.reindex(columns=["Avg. family","Std. family", "Avg. product", "Std. product"])
       display(mean_std_frame)
-      mean_frame.plot()
+
       fig, axs = plt.subplots(2)
 
       dataframe.boxplot(by='number of versions',ax=axs)
+      fig.set_size_inches(10,12)
       for ax in axs:
          ax.set_ylim((0,0.10))
          ax.set_ylabel("Calculation time (s)")
@@ -32,6 +33,8 @@ def plot(option : str):
 if __name__ == "__main__":
    if len(sys.argv) > 1:
       plot("asc")
+      plt.savefig('plot-asc.pdf')
       plot("desc")
+      plt.savefig('plot-desc.pdf')
       plt.show()
       
