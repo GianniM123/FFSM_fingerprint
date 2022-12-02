@@ -97,7 +97,8 @@ def main():
             end_time = timeit.default_timer()
             diff_time = (end_time - begin_time)
             print("calculation costs: ", diff_time, " seconds")
-            nx.drawing.nx_agraph.write_dot(ds.seperating_sequence,"CDS.dot")
+            if ds.exists:
+                nx.drawing.nx_agraph.write_dot(ds.seperating_sequence,"CDS.dot")
         else:
             if mode == 0:
                 ds = CADS.from_file(sequence_file)

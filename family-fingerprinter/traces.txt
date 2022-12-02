@@ -1,3 +1,3 @@
 # input/output
-Start/1
-Exit/1
+Pause/1
+Pause/1

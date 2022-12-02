@@ -48,7 +48,6 @@ class ShuLeeReset(ConfigurationDistinguishingSequence):
                         sequences.append(seq)
                         break     
                     except Exception as e:
-                        print(e)
                         raise SystemExit('Could not distinguish the given configurations.')
             new_partition = []
             self.ffsm.reset_to_initial_state()
