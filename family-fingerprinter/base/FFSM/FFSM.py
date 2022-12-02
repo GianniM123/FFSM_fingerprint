@@ -3,7 +3,7 @@ import networkx as nx
 RESET_IN = "RESET-SYS"
 RESET_OUT = "epsilon"
 
-def unify_features(current_variants : set[str], new_variants : set[str]) -> set[str]:
+def unify_configs(current_variants : set[str], new_variants : set[str]) -> set[str]:
     if current_variants == set():
         return new_variants
     elif new_variants == set():
@@ -109,7 +109,7 @@ class FFSM():
         new_current_states : dict[ConditionalState, set[str]] = {}
         outputs : dict[str, set[str]] = {}
         for current_state, feature_config in self.current_states:
-            features = unify_features(feature_config, features_in)
+            features = unify_configs(feature_config, features_in)
             for feature in features:
                 new_state = current_state.transitions[input][feature]
                 output = current_state.outputs[input][feature]
