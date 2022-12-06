@@ -34,6 +34,7 @@ class CADS(ConfigurationDistinguishingSequence):
         seen_states = []
         names = []
         root = Option(self.ffsm.features,self.ffsm.current_states, nx.MultiDiGraph())
+
         options : list[Option] = []
         options.append(root)
 

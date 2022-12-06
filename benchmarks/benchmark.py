@@ -1,8 +1,10 @@
 import subprocess
 import re
+from time import sleep
 import pandas as pd
 import shlex
 import sys
+import networkx as nx
 
 FAMILY = "python3 ../family-fingerprinter/main.py --FFSM={ffsm} --active={fsm} --{option}"
 
@@ -32,15 +34,18 @@ def run_product_fingerprinter(folder,fsm) -> float:
 
 
 def run_benchmark(option : str):
-    time_dict = {"number of versions" : [], "family asc" : [], "product asc" : [], "family desc" : [], "product desc" : []}
+    time_dict = {"number of versions" : [], "family asc" : [], "product asc" : [], "family desc" : [], "product desc" : [], "asc node size": [], "desc node size": [], "asc edge size": [], "desc edge size": []}
     for i in range(2,17):
             print("at nr: ", i)
-            for j in range(0,100):
+            for _ in range(0,100):
                 time_dict["number of versions"].append(i)
                 for sort in ["asc", "desc"]:
                     ffsm = FFSM.format(version=option, type=sort, number=i)
                     fsm = FSM.format(version=option)
                     folder = FOLDER.format(version=option,type=sort, number=i)
+                    graph : nx.MultiDiGraph = nx.drawing.nx_agraph.read_dot(ffsm)
+                    time_dict[sort + " node size"].append(len(graph.nodes))
+                    time_dict[sort + " edge size"].append(len(graph.edges))
 
                     time1 = run_family_fingerprinter(ffsm,fsm,"shulee")
                     time2 = run_product_fingerprinter(folder,fsm)

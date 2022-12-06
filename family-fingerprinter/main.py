@@ -1,6 +1,6 @@
 import getopt
 import sys
-import timeit
+import time
 from aalpy.SULs.AutomataSUL import MealySUL
 from aalpy.utils.FileHandler import load_automaton_from_file
 from aalpy.automata import MealyMachine
@@ -73,28 +73,25 @@ def main():
         print("variant: ", possible_variants)
     elif active_mode == True and mode is not None:
         ds : ConfigurationDistinguishingSequence = None
-        missing_alphabet : set = None
-        fsm = load_automaton_from_file(file,'mealy')
-        reset_when_sink(fsm)
+        ffsm_alphabet : set[str] = None
         if ffsm_file is not None:
             ffsm = FFSM.from_file(ffsm_file)
             ffsm.reset_when_sink()
-
-            missing_alphabet = ffsm.alphabet.difference(set(fsm.get_input_alphabet()))
+            ffsm_alphabet = ffsm.alphabet
             ffsm.reset_to_initial_state()
             ffsm.make_input_complete()
 
             begin_time = None 
             if mode == 0:
-                begin_time = timeit.default_timer()
+                begin_time = time.time()
                 ds = CADS(ffsm=ffsm)
             elif mode == 1:
-                begin_time = timeit.default_timer()
+                begin_time = time.time()
                 ds = CPDS(ffsm=ffsm)
             elif mode == 2:
-                begin_time = timeit.default_timer()
+                begin_time = time.time()
                 ds = ShuLeeReset(ffsm=ffsm)
-            end_time = timeit.default_timer()
+            end_time = time.time()
             diff_time = (end_time - begin_time)
             print("calculation costs: ", diff_time, " seconds")
             if ds.exists:
@@ -106,12 +103,14 @@ def main():
                 ds = CPDS.from_file(sequence_file)
             elif mode == 2:
                 ds = ShuLeeReset.from_file(sequence_file)
-            inputs = set()
             for node in ds.seperating_sequence.nodes.data():
                 if ds.seperating_sequence.out_degree(node[0]) > 0:
-                    inputs.add(node[1]["label"])
-            missing_alphabet = inputs.difference(set(fsm.get_input_alphabet()))
+                    ffsm_alphabet.add(node[1]["label"])
+
                 
+        fsm = load_automaton_from_file(file,'mealy')
+        reset_when_sink(fsm)        
+        missing_alphabet = ffsm_alphabet.difference(set(fsm.get_input_alphabet()))
 
         for a in missing_alphabet: #for the non exisiting alphabet add a self loop on the initial state, make_input_complete() will do the rest
             fsm.initial_state.transitions[a] = fsm.initial_state
