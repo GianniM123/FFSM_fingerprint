@@ -94,15 +94,7 @@ class FFSM():
 
     def __eq__(self, other) -> bool:
         if isinstance(other, FFSM):
-            equal = True
-            for current_state_1 in self.current_states:
-                match_found = False
-                for current_state_2 in other.current_states:
-                    if current_state_1[0] == current_state_2[0] and current_state_1[1] == current_state_2[1]: #states are equal
-                        match_found = True
-                        break
-                equal = equal and match_found
-            return equal and self.alphabet == other.alphabet and self.features == other.features and self.initial_state == other.initial_state and self.states == other.states
+            return self.current_states == other.current_states and self.alphabet == other.alphabet and self.features == other.features and self.initial_state == other.initial_state and self.states == other.states
 
 
     def step(self, input : str, features_in : set[str] = set()) -> list[tuple[str, set[str]]]:
@@ -120,12 +112,15 @@ class FFSM():
                 if new_state in new_current_states.keys():
                     new_current_states[new_state].add(feature)
                 else:
-                    new_current_states[new_state] = {feature}                  
+                    new_current_states[new_state] = {feature}
+                                 
                         
         if len(new_current_states) == 0:
             raise Exception("Invalid input: ", input, " given the state: ", self.current_states)
         else:
-            self.current_states = list(new_current_states.items())
+            for key in new_current_states.keys():
+                new_current_states[key] = frozenset(new_current_states[key])
+            self.current_states = set(new_current_states.items())
         return list(outputs.items())
 
     def make_input_complete(self) -> None:
@@ -170,9 +165,9 @@ class FFSM():
 
     def reset_to_initial_state(self, features : set[str] = None) -> None:
         if features == None:
-            self.current_states : list[tuple[ConditionalState, set[str]]] = [(self.initial_state, self.features)]
+            self.current_states : set[tuple[ConditionalState, frozenset[str]]] = {(self.initial_state, frozenset(self.features))}
         else:
-            self.current_states : list[tuple[ConditionalState, set[str]]] = [(self.initial_state, features)]
+            self.current_states : set[tuple[ConditionalState, frozenset[str]]] = {(self.initial_state, frozenset(features))}
 
     def get_transitions(self):
         transitions : list[tuple[tuple[str,set[str]],tuple[str,set[str]],tuple[str,set[str]],str]] = []

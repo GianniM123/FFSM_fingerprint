@@ -10,22 +10,14 @@ from base.fingerprint.active.ConfigurationDistinguishingSequence import Configur
 @dataclass
 class Option:
     features: list[set[str]]
-    current_states: list[tuple[ConditionalState, set[str]]]
+    current_states: set[tuple[ConditionalState, frozenset[str]]]
     sequence : list[tuple[set[str],list[tuple[str,str]]]]
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Option):
-            equal = True
-            for current_state_1 in self.current_states:
-                match_found = False
-                for current_state_2 in other.current_states:
-                    if current_state_1[0] == current_state_2[0] and current_state_1[1] == current_state_2[1]: #states are equal
-                        match_found = True
-                        break
-                equal = equal and match_found
             self.features.sort()
             other.features.sort()
-            return (self.features == other.features and equal) 
+            return (self.features == other.features and self.current_states == other.current_states) 
 
 
 class CPDS(ConfigurationDistinguishingSequence):

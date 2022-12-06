@@ -11,20 +11,12 @@ from base.fingerprint.active.ConfigurationDistinguishingSequence import Configur
 @dataclass
 class Option:
     features: set[str]
-    current_states: list[tuple[ConditionalState, set[str]]]
+    current_states: set[tuple[ConditionalState, frozenset[str]]]
     graph : nx.MultiDiGraph
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Option):
-            equal = True
-            for current_state_1 in self.current_states:
-                match_found = False
-                for current_state_2 in other.current_states:
-                    if current_state_1[0] == current_state_2[0] and current_state_1[1] == current_state_2[1]: #states are equal
-                        match_found = True
-                        break
-                equal = equal and match_found
-            return (self.features == other.features and equal) 
+            return self.features == other.features and self.current_states == other.current_states
 
 
 class CADS(ConfigurationDistinguishingSequence):
@@ -42,7 +34,6 @@ class CADS(ConfigurationDistinguishingSequence):
         seen_states = []
         names = []
         root = Option(self.ffsm.features,self.ffsm.current_states, nx.MultiDiGraph())
-
         options : list[Option] = []
         options.append(root)
 
@@ -119,24 +110,6 @@ class CADS(ConfigurationDistinguishingSequence):
                     print(e)
                     pass
 
-    def _add_sequence_in_graph(self, sequence, configuration):
-        current_node = self.root
-        
-        for trace in sequence:
-            edges = self.graph.out_edges(current_node, data=True)
-            to_node = None
-            for edge in edges:
-                if edge[2]["label"] == trace:
-                    to_node = edge[1]
-                    break
-            if to_node is not None:
-                self.graph.nodes[to_node]["label"] = self.graph.nodes[to_node]["label"].union(configuration)
-                current_node = to_node
-            else:
-                new_node = fresh_var(len(self.graph.nodes))
-                self.graph.add_node(new_node,label=configuration)
-                self.graph.add_edge(current_node, new_node, label=trace)
-                current_node = new_node
     
     def _add_model(self, new_graph : nx.MultiDiGraph):
         for node in new_graph.nodes.data():
@@ -152,10 +125,12 @@ class CADS(ConfigurationDistinguishingSequence):
                 self.graph.add_edge(edge[0],edge[1],label=edge[2]["label"])
 
     def _fix_graph(self):
-        # Check if the property holds that for a input Parent is subset equal to children 
         
         rerun = True
         while rerun:
+            rerun = False
+        
+            # Check if the property holds that for a input Parent is subset equal to children 
             for node in self.graph.nodes.data():
                 input_dict = {}
                 for edge in self.graph.out_edges(node[0], data=True):
@@ -173,9 +148,7 @@ class CADS(ConfigurationDistinguishingSequence):
                                 self.graph.remove_edge(edge[0],edge[1],key=edge[2])
                 
 
-        # Remove leafs that are not singular or nodes are not connected to the root
-
-            rerun = False
+            # Remove leafs that are not singular or nodes are not connected to the root
             nodes = copy.deepcopy(self.graph.nodes.data())
             for node in nodes:
                 if node[0] != self.root:
@@ -205,9 +178,6 @@ class CADS(ConfigurationDistinguishingSequence):
             nodes = copy.deepcopy(self.graph.nodes.data())
             for node in nodes:
                 if node[0] != self.root:
-                    if self.graph.in_degree(node[0]) == 0:
-                        self.graph.remove_node(node[0])
-                        rerun = True
-                    elif self.graph.out_degree(node[0]) == 0 and len(node[1]["label"]) != 1:
+                    if self.graph.in_degree(node[0]) == 0 or self.graph.out_degree(node[0]) == 0 and len(node[1]["label"]) != 1:
                         self.graph.remove_node(node[0])
                         rerun = True
