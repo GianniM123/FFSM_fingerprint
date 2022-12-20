@@ -31,7 +31,7 @@ class CADS(ConfigurationDistinguishingSequence):
 
     def _calculate_graph(self):
         self.ffsm.reset_to_initial_state()
-        seen_states = []
+        seen_states : list[Option] = []
         names = []
         root = Option(self.ffsm.features,self.ffsm.current_states, nx.MultiDiGraph())
 
@@ -102,6 +102,13 @@ class CADS(ConfigurationDistinguishingSequence):
 
                         elif new_option not in seen_states and new_option not in options:
                             options.append(new_option)
+                        else:
+                            if new_option in seen_states:
+                                index = seen_states.index(new_option)
+                                self._add_model(new_option.graph, seen_states[index].graph)
+                            elif new_option in options:
+                                index = options.index(new_option)
+                                self._add_model(new_option.graph, options[index].graph)
 
                     if self.exists:
                         options = []
@@ -112,18 +119,20 @@ class CADS(ConfigurationDistinguishingSequence):
                     pass
 
     
-    def _add_model(self, new_graph : nx.MultiDiGraph):
+    def _add_model(self, new_graph : nx.MultiDiGraph, other_graph : nx.MultiDiGraph = None):
+        if other_graph is None:
+            other_graph = self.graph
         for node in new_graph.nodes.data():
-            if node[0] not in self.graph.nodes.keys():
-                self.graph.add_node(node[0], label = node[1]["label"])
+            if node[0] not in other_graph.nodes.keys():
+                other_graph.add_node(node[0], label = node[1]["label"])
         
         for edge in new_graph.edges.data():
             has_edge = False
-            for edge_graph in self.graph.out_edges(edge[0],data=True):
+            for edge_graph in other_graph.out_edges(edge[0],data=True):
                 if edge_graph[1] == edge[1] and edge[2]["label"] == edge_graph[2]["label"]:
                     has_edge = True
             if not has_edge:
-                self.graph.add_edge(edge[0],edge[1],label=edge[2]["label"])
+                other_graph.add_edge(edge[0],edge[1],label=edge[2]["label"])
 
     def _fix_graph(self):
         

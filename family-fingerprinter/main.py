@@ -96,6 +96,8 @@ def main():
             print("calculation costs: ", diff_time, " seconds")
             if ds.exists:
                 nx.drawing.nx_agraph.write_dot(ds.seperating_sequence,"CDS.dot")
+            else:
+                sys.exit("CDS does not exists")
         else:
             if mode == 0:
                 ds = CADS.from_file(sequence_file)
