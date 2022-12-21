@@ -42,14 +42,14 @@ class CADS(ConfigurationDistinguishingSequence):
         self.root = fresh_var(0)
         self.graph.add_node(self.root, label=root.features)
         names.append((root,self.root))
-
         root.graph.add_node(self.root,label=root.features)
+        alphabet = list(sorted(self.ffsm.alphabet))
         while len(options) > 0:
             to_discover = options.pop(0)
       
             to_discover_node = id_in_list(to_discover,names)
             seen_states.append(to_discover)
-            for input in self.ffsm.alphabet:
+            for input in alphabet:
                 try:
                     self.ffsm.current_states = to_discover.current_states
                     outputs = self.ffsm.step(input)
@@ -102,13 +102,6 @@ class CADS(ConfigurationDistinguishingSequence):
 
                         elif new_option not in seen_states and new_option not in options:
                             options.append(new_option)
-                        else:
-                            if new_option in seen_states:
-                                index = seen_states.index(new_option)
-                                self._add_model(new_option.graph, seen_states[index].graph)
-                            elif new_option in options:
-                                index = options.index(new_option)
-                                self._add_model(new_option.graph, options[index].graph)
 
                     if self.exists:
                         options = []

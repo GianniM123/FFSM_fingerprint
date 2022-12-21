@@ -64,6 +64,8 @@ def plot(option : str):
     max_val = ceil(max(dataframe["family " + option].to_list()) * 100)/100
     dataframe.boxplot(by='number of versions',ax=axs)
     fig.set_size_inches(10,12)
+    axs[0].set_title("Family-based " + option)
+    axs[1].set_title("Product-based " + option)
     for ax in axs:
         ax.set_ylim((0,max_val))
         ax.set_ylabel("Calculation time (s)")

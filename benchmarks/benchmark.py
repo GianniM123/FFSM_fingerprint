@@ -16,7 +16,7 @@ FFSM = "../dot-files/{version}/combined/{type}/{version}-distinct_{number}.dot"
 FSM = "../dot-files/{version}/0.9.7-TLS10.dot"
 FOLDER = "../dot-files/{version}/distinct/{type}/{number}"
 
-TIMEOUT_MIN = 5 * 60
+TIMEOUT_MIN = 6 * 60
 
 def get_time(process : subprocess.Popen):
     try:
@@ -26,7 +26,8 @@ def get_time(process : subprocess.Popen):
         time = float(re.search("[0-9].[0-9]+\s",str(result)).group())
         return time
     except:
-        return TIMEOUT_MIN + 1
+        process.terminate()
+        return TIMEOUT_MIN
 
 def run_family_fingerprinter(ffsm,fsm,option) -> float:
     process = subprocess.Popen(shlex.split(FAMILY.format(ffsm=ffsm, fsm=fsm,option=option)),stdout=subprocess.PIPE)
@@ -69,10 +70,9 @@ def extract_info_from_graph():
 
 def run_cds_benchmark(option : str):
     time_dict = {"number of versions" : [], "cADS time" : [], "cADS size" : [], "cADS reset" : [],  "cADS depth" : [], "cPDS time" : [], "cPDS size" : [], "cPDS reset" : [],  "cPDS depth" : [], }
-    for i in range(2,16):
+    for i in range(2,17):
         print("at nr: ", i)
-        max_j = 10 if i <= 8 else 4
-        for _ in range(0,max_j):
+        for _ in range(0,4):
             time_dict["number of versions"].append(i)
             ffsm = FFSM.format(version=option, type="asc", number=i)
             fsm = FSM.format(version=option)
@@ -90,8 +90,8 @@ def run_cds_benchmark(option : str):
                 time_dict["cADS reset"].append(0)
                 time_dict["cADS depth"].append(0)
 
-            time_pds = run_family_fingerprinter(ffsm,fsm,"preset")
-            if time_pds != TIMEOUT_MIN:
+            if i < 8:
+                time_pds = run_family_fingerprinter(ffsm,fsm,"preset")
                 info_dict = extract_info_from_graph()
                 time_dict["cPDS time"].append(time_pds)
                 time_dict["cPDS size"].append(info_dict["size"])

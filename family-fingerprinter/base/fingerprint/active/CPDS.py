@@ -38,6 +38,7 @@ class CPDS(ConfigurationDistinguishingSequence):
         nr_features = len(self.ffsm.features)
         options = [root]
         names = []
+        alphabet = sorted(self.ffsm.alphabet)
         while len(options) > 0:
             to_discover = options.pop(0)
             id = id_in_list(to_discover,names)
@@ -47,7 +48,7 @@ class CPDS(ConfigurationDistinguishingSequence):
                 self.graph.add_node(id, label=to_discover.features)
             
             seen_states.append(to_discover)
-            for input in self.ffsm.alphabet:
+            for input in alphabet:
                 try:
                     self.ffsm.current_states = to_discover.current_states
                     outputs = self.ffsm.step(input)
@@ -86,9 +87,9 @@ class CPDS(ConfigurationDistinguishingSequence):
                             options = []
                             self.exists = True
                             
-                            self.root = "a"
+                            self.root = "a0"
                             self.configuration_ss.add_node(self.root, label=self.ffsm.features)
-                            count = 0
+                            count = 1
                             for configuration, sequence in new_option.sequence:
                                 current_node = self.root
                                 for input, output in sequence:

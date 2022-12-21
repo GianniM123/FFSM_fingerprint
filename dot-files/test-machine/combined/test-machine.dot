@@ -27,10 +27,10 @@ digraph "" {
     a -> e	[feature="C|D",
 		label="b/0"];
 	
-	a -> b	[feature="A|B",
-		label="c/1"];
-    a -> e	[feature="C|D",
-		label="c/0"];
+	// a -> b	[feature="A|B",
+	// 	label="c/1"];
+    // a -> e	[feature="C|D",
+	// 	label="c/0"];
 
 	b -> f [feature="A",
 		label="a/0"];
@@ -41,4 +41,13 @@ digraph "" {
 		label="a/0"];
 	e -> i [feature="D",
 		label="a/1"];
+
+	x [feature="A|B|C|D"]
+	a -> x  [feature="A|B|C|D",
+		label="c/1"];
+
+	x -> b	[feature="A|B",
+		label="c/1"];
+    x -> e	[feature="C|D",
+		label="c/0"];
 }
