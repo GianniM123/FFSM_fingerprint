@@ -121,7 +121,7 @@ class FFSM():
             for key in new_current_states.keys():
                 new_current_states[key] = frozenset(new_current_states[key])
             self.current_states = set(new_current_states.items())
-        return list(sorted(outputs.items()))
+        return list(outputs.items())
 
     def make_input_complete(self) -> None:
         for state in self.states:
