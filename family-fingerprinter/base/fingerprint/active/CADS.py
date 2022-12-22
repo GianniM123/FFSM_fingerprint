@@ -65,6 +65,7 @@ class CADS(ConfigurationDistinguishingSequence):
                     if counter != len(to_discover.features):
                         continue
                     new_graph = copy.deepcopy(to_discover.graph)
+                    new_discover = False
                     for output, features  in output_dict.items():
 
                         self.ffsm.current_states = to_discover.current_states
@@ -83,6 +84,7 @@ class CADS(ConfigurationDistinguishingSequence):
                             new_graph.add_edge(to_discover_node, new_node, label=input + "/" + output)
 
                         if len(new_option.features) == 1:
+                            new_discover = True
                             seen_states.append(new_option)
                             self._add_model(new_option.graph)
                             filtered = list(filter(lambda x: len(x[1]["label"]) == 1, self.graph.nodes.data()))
@@ -101,6 +103,14 @@ class CADS(ConfigurationDistinguishingSequence):
                                     self.graph = graph
 
                         elif new_option not in seen_states and new_option not in options:
+                            options.append(new_option)
+                            new_discover = True
+                    
+                    if len(output_dict.items()) > 1 and new_discover == False:
+                        for output, features  in output_dict.items():
+                            self.ffsm.current_states = to_discover.current_states
+                            self.ffsm.step(input,features)
+                            new_option = Option(features,self.ffsm.current_states, new_graph)
                             options.append(new_option)
 
                     if self.exists:

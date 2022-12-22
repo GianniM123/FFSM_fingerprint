@@ -23,7 +23,7 @@ def get_time(process : subprocess.Popen):
         process.wait(timeout=TIMEOUT_MIN)
         result = process.stdout.read()
         process.terminate()
-        time = float(re.search("[0-9].[0-9]+\s",str(result)).group())
+        time = float(re.search("[0-9]+.[0-9]+\s",str(result)).group())
         return time
     except:
         process.terminate()
