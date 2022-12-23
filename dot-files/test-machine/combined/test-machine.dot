@@ -17,6 +17,9 @@ digraph "" {
 	h	[feature="C"];
 	i	[feature="D"];	
 
+	y	[feature="A|B"];
+	z	[feature="C|D"];
+
     a -> b	[feature="A|B",
 		label="a/1"];
     a -> c	[feature="C|D",
@@ -31,15 +34,18 @@ digraph "" {
 	// 	label="c/1"];
     // a -> e	[feature="C|D",
 	// 	label="c/0"];
-
-	b -> f [feature="A",
+	b -> y	[feature="A|B",
+		label="b/1"];
+	y -> f [feature="A",
 		label="a/0"];
-	b -> g [feature="B",
+	y -> g [feature="B",
 		label="a/1"];
 	
-	e -> h [feature="C",
+	e -> z	[feature="C|D",
+	label="b/0"];
+	z -> h [feature="C",
 		label="a/0"];
-	e -> i [feature="D",
+	z -> i [feature="D",
 		label="a/1"];
 
 	x [feature="A|B|C|D"]

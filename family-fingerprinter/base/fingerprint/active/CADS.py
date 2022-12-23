@@ -43,13 +43,12 @@ class CADS(ConfigurationDistinguishingSequence):
         self.graph.add_node(self.root, label=root.features)
         names.append((root,self.root))
         root.graph.add_node(self.root,label=root.features)
-        alphabet = list(sorted(self.ffsm.alphabet))
         while len(options) > 0:
             to_discover = options.pop(0)
       
             to_discover_node = id_in_list(to_discover,names)
             seen_states.append(to_discover)
-            for input in alphabet:
+            for input in self.ffsm.alphabet:
                 try:
                     self.ffsm.current_states = to_discover.current_states
                     outputs = self.ffsm.step(input)
@@ -66,22 +65,27 @@ class CADS(ConfigurationDistinguishingSequence):
                         continue
                     new_graph = copy.deepcopy(to_discover.graph)
                     new_discover = False
+                    new_options_list : list[Option] = []
                     for output, features  in output_dict.items():
 
                         self.ffsm.current_states = to_discover.current_states
                         self.ffsm.step(input,features)
-                        new_option = Option(features,self.ffsm.current_states, new_graph)
+                        new_option = Option(features,self.ffsm.current_states, nx.MultiDiGraph())
 
                         new_node = id_in_list(new_option,names)
                         if new_node == None:
                             new_node = fresh_var(len(names))
                             names.append((new_option,new_node))
                             new_graph.add_node(new_node, label=features)
+                            new_graph.add_edge(to_discover_node, new_node, label=input + "/" + output)
                         elif new_node not in new_graph.nodes.keys():
                             new_graph.add_node(new_node, label=features)
-                        
-                        if new_node != to_discover_node and new_node != self.root:
                             new_graph.add_edge(to_discover_node, new_node, label=input + "/" + output)
+                        
+                        new_options_list.append(new_option)
+                    
+                    for new_option in new_options_list:
+                        new_option.graph = new_graph
 
                         if len(new_option.features) == 1:
                             new_discover = True
@@ -107,11 +111,7 @@ class CADS(ConfigurationDistinguishingSequence):
                             new_discover = True
                     
                     if len(output_dict.items()) > 1 and new_discover == False:
-                        for output, features  in output_dict.items():
-                            self.ffsm.current_states = to_discover.current_states
-                            self.ffsm.step(input,features)
-                            new_option = Option(features,self.ffsm.current_states, new_graph)
-                            options.append(new_option)
+                        self._add_model(new_graph)
 
                     if self.exists:
                         options = []

@@ -44,6 +44,7 @@ class FFSM():
         for state in self.states:
             for input in state.transitions.keys():
                 self.alphabet.add(input)
+        self.alphabet = set(sorted(self.alphabet))
         self.features = features
         self.reset_to_initial_state()      
 

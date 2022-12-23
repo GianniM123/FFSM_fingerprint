@@ -16,7 +16,7 @@ FFSM = "../dot-files/{version}/combined/{type}/{version}-distinct_{number}.dot"
 FSM = "../dot-files/{version}/0.9.7-TLS10.dot"
 FOLDER = "../dot-files/{version}/distinct/{type}/{number}"
 
-TIMEOUT_MIN = 6 * 60
+TIMEOUT_MIN = 20 * 60
 
 def get_time(process : subprocess.Popen):
     try:
@@ -72,7 +72,7 @@ def run_cds_benchmark(option : str):
     time_dict = {"number of versions" : [], "cADS time" : [], "cADS size" : [], "cADS reset" : [],  "cADS depth" : [], "cPDS time" : [], "cPDS size" : [], "cPDS reset" : [],  "cPDS depth" : [], }
     for i in range(2,17):
         print("at nr: ", i)
-        for _ in range(0,4):
+        for _ in range(0,5):
             time_dict["number of versions"].append(i)
             ffsm = FFSM.format(version=option, type="asc", number=i)
             fsm = FSM.format(version=option)
