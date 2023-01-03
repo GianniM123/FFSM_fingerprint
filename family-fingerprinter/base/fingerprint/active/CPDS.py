@@ -9,14 +9,12 @@ from base.fingerprint.active.ConfigurationDistinguishingSequence import Configur
 
 @dataclass
 class Option:
-    features: list[set[str]]
+    features: set[frozenset[str]]
     current_states: set[tuple[ConditionalState, frozenset[str]]]
     sequence : list[tuple[set[str],list[tuple[str,str]]]]
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Option):
-            self.features.sort()
-            other.features.sort()
             return (self.features == other.features and self.current_states == other.current_states) 
 
 
@@ -34,10 +32,11 @@ class CPDS(ConfigurationDistinguishingSequence):
         self.graph = nx.Graph()
         self.ffsm.reset_to_initial_state()
         seen_states = []
-        root = Option(list(self.ffsm.features),self.ffsm.current_states, [(self.ffsm.features, [])])
+        root = Option({frozenset(self.ffsm.features)},self.ffsm.current_states, [(self.ffsm.features, [])])
         nr_features = len(self.ffsm.features)
         options = [root]
         names = []
+        alphabet = list(sorted(self.ffsm.alphabet))
         while len(options) > 0:
             to_discover = options.pop(0)
             id = id_in_list(to_discover,names)
@@ -47,7 +46,7 @@ class CPDS(ConfigurationDistinguishingSequence):
                 self.graph.add_node(id, label=to_discover.features)
             
             seen_states.append(to_discover)
-            for input in self.ffsm.alphabet:
+            for input in alphabet:
                 try:
                     self.ffsm.current_states = to_discover.current_states
                     outputs = self.ffsm.step(input)
@@ -63,12 +62,12 @@ class CPDS(ConfigurationDistinguishingSequence):
                             output_dict[out] = output_dict[out].union(set(features))
                     if count_features != nr_features:
                         continue
-                    new_option = Option([],self.ffsm.current_states, []) 
+                    new_option = Option(set(),self.ffsm.current_states, []) 
                     for output, new_split_features in output_dict.items():
                         for splitted_features, sequence in to_discover.sequence:
                             features_intersection = new_split_features.intersection(splitted_features)
                             if len(features_intersection) > 0:
-                                new_option.features.append(features_intersection)
+                                new_option.features.add(frozenset(features_intersection))
                                 new_option.sequence.append((features_intersection, sequence + [(input,output)]))
 
                     node_id = id_in_list(new_option,names)
@@ -85,7 +84,6 @@ class CPDS(ConfigurationDistinguishingSequence):
                         if stop:
                             options = []
                             self.exists = True
-                            
                             self.root = "a0"
                             self.configuration_ss.add_node(self.root, label=self.ffsm.features)
                             count = 1
@@ -106,7 +104,6 @@ class CPDS(ConfigurationDistinguishingSequence):
                                         self.configuration_ss.add_edge(current_node, self.root + str(count), label=label)
                                         current_node = self.root + str(count)
                                         count = count + 1
-                            
                             break
                 except Exception as e:
                     print(e)

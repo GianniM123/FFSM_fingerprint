@@ -144,24 +144,16 @@ class FFSM():
                         state.outputs[input][feature] = 'epsilon'
                         
 
-    def reset_when_sink(self):
+    def add_resets(self):
+        self.alphabet.add(RESET_IN)
         for feature in self.features:
             for state in self.states:
-                if feature in state.features:
-                    is_sink = True
-                    for edge_dict in state.transitions.values():
-                        for features, to_state in edge_dict.items():
-                            if feature in features and to_state != state:
-                                is_sink = False
-                                break
-                    if is_sink:
-                        self.alphabet.add(RESET_IN)
-                        if RESET_IN not in state.transitions.keys():
-                            state.transitions[RESET_IN] = {feature : self.initial_state}
-                            state.outputs[RESET_IN] = {feature: RESET_OUT}
-                        else:
-                            state.transitions[RESET_IN][feature] = self.initial_state
-                            state.outputs[RESET_IN][feature] = RESET_OUT
+                if RESET_IN not in state.transitions.keys():
+                    state.transitions[RESET_IN] = {feature : self.initial_state}
+                    state.outputs[RESET_IN] = {feature: RESET_OUT}
+                else:
+                    state.transitions[RESET_IN][feature] = self.initial_state
+                    state.outputs[RESET_IN][feature] = RESET_OUT
 
 
     def reset_to_initial_state(self, features : set[str] = None) -> None:

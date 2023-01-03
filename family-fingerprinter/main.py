@@ -16,14 +16,8 @@ from base.fingerprint.active.ShuLeeReset import ShuLeeReset
 from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence
 
 
-def reset_when_sink(fsm : MealyMachine):
+def add_resets(fsm : MealyMachine):
     for state in fsm.states:
-        is_sink = True
-        for out_state in state.transitions.values():
-            if out_state != state:
-                is_sink = False
-                break
-        if is_sink:
             state.transitions[RESET_IN] = fsm.initial_state
             state.output_fun[RESET_IN] = RESET_OUT
 
@@ -76,7 +70,7 @@ def main():
         ffsm_alphabet : set[str] = None
         if ffsm_file is not None:
             ffsm = FFSM.from_file(ffsm_file)
-            ffsm.reset_when_sink()
+            ffsm.add_resets()
             ffsm_alphabet = ffsm.alphabet
             ffsm.reset_to_initial_state()
             ffsm.make_input_complete()
@@ -111,7 +105,7 @@ def main():
 
                 
         fsm = load_automaton_from_file(file,'mealy')
-        reset_when_sink(fsm)        
+        add_resets(fsm)        
         missing_alphabet = ffsm_alphabet.difference(set(fsm.get_input_alphabet()))
 
         for a in missing_alphabet: #for the non exisiting alphabet add a self loop on the initial state, make_input_complete() will do the rest

@@ -58,7 +58,7 @@ def run_shulee_benchmark(option : str):
 
 def extract_info_from_graph():
     graph : nx.MultiDiGraph = nx.drawing.nx_agraph.read_dot('CDS.dot')
-    return_dict = {"size" : len(graph.nodes), "reset" : 0, "depth" : 0}
+    return_dict = {"edges size" : len(graph.edges), "nodes size" : len(graph.nodes), "reset" : 0, "depth" : 0}
     for node in graph.nodes.data():
         if node[1]["label"] == "RESET-SYS":
             return_dict["reset"] = return_dict["reset"] + 1
@@ -69,10 +69,10 @@ def extract_info_from_graph():
     return return_dict
 
 def run_cds_benchmark(option : str):
-    time_dict = {"number of versions" : [], "cADS time" : [], "cADS size" : [], "cADS reset" : [],  "cADS depth" : [], "cPDS time" : [], "cPDS size" : [], "cPDS reset" : [],  "cPDS depth" : [], }
+    time_dict = {"number of versions" : [], "cADS time" : [], "cADS nodes size" : [], "cADS edges size" : [],"cADS reset" : [],  "cADS depth" : [], "cPDS time" : [], "cPDS nodes size" : [],  "cPDS edges size" : [], "cPDS reset" : [],  "cPDS depth" : [], }
     for i in range(2,17):
         print("at nr: ", i)
-        for _ in range(0,5):
+        for _ in range(0,10):
             time_dict["number of versions"].append(i)
             ffsm = FFSM.format(version=option, type="asc", number=i)
             fsm = FSM.format(version=option)
@@ -81,25 +81,29 @@ def run_cds_benchmark(option : str):
             if time_ads != TIMEOUT_MIN:
                 info_dict = extract_info_from_graph()
                 time_dict["cADS time"].append(time_ads)
-                time_dict["cADS size"].append(info_dict["size"])
+                time_dict["cADS nodes size"].append(info_dict["nodes size"])
+                time_dict["cADS edges size"].append(info_dict["edges size"])
                 time_dict["cADS reset"].append(info_dict["reset"])
                 time_dict["cADS depth"].append(info_dict["depth"])
             else:
                 time_dict["cADS time"].append(TIMEOUT_MIN)
-                time_dict["cADS size"].append(0)
+                time_dict["cADS nodes size"].append(0)
+                time_dict["cADS edges size"].append(0)
                 time_dict["cADS reset"].append(0)
                 time_dict["cADS depth"].append(0)
 
-            if i < 8:
-                time_pds = run_family_fingerprinter(ffsm,fsm,"preset")
+            time_pds = run_family_fingerprinter(ffsm,fsm,"preset")
+            if time_pds != TIMEOUT_MIN:
                 info_dict = extract_info_from_graph()
                 time_dict["cPDS time"].append(time_pds)
-                time_dict["cPDS size"].append(info_dict["size"])
+                time_dict["cPDS nodes size"].append(info_dict["nodes size"])
+                time_dict["cPDS edges size"].append(info_dict["edges size"])
                 time_dict["cPDS reset"].append(info_dict["reset"])
                 time_dict["cPDS depth"].append(info_dict["depth"])
             else:
                 time_dict["cPDS time"].append(TIMEOUT_MIN)
-                time_dict["cPDS size"].append(0)
+                time_dict["cPDS nodes size"].append(0)
+                time_dict["cPDS edges size"].append(0)
                 time_dict["cPDS reset"].append(0)
                 time_dict["cPDS depth"].append(0)
 

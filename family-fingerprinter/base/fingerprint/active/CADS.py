@@ -43,12 +43,13 @@ class CADS(ConfigurationDistinguishingSequence):
         self.graph.add_node(self.root, label=root.features)
         names.append((root,self.root))
         root.graph.add_node(self.root,label=root.features)
+        alphabet = list(sorted(self.ffsm.alphabet))
         while len(options) > 0:
             to_discover = options.pop(0)
       
             to_discover_node = id_in_list(to_discover,names)
             seen_states.append(to_discover)
-            for input in self.ffsm.alphabet:
+            for input in alphabet:
                 try:
                     self.ffsm.current_states = to_discover.current_states
                     outputs = self.ffsm.step(input)
