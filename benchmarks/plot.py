@@ -76,14 +76,14 @@ def plot_shulee(file : str, option : str):
     fig.suptitle("")
     plt.savefig('oms-plot-' + option + '.pdf')
 
-def plot_cds(file : str):
+def plot_cds(file : str, option : str):
     dataframe = pd.read_csv(file)
     ADS_frame = dataframe[["number of versions", "cADS time", "cADS nodes size", "cADS edges size", "cADS reset", "cADS depth"]]
     ADS_frame = ADS_frame[ADS_frame["cADS time"] != TIMEOUT_MIN]
 
-    PDS_frame = dataframe[["number of versions", "cPDS time", "cPDS nodes size", "cPDS edges size", "cPDS reset", "cPDS depth"]]
-    PDS_frame = PDS_frame[PDS_frame["cPDS time"] != TIMEOUT_MIN]
-    display(PDS_frame)
+    PDS_frame = dataframe[["number of versions", option + " time", option + " nodes size", option + " edges size", option + " reset", option + " depth"]]
+    print(PDS_frame[PDS_frame[option + " time"] == TIMEOUT_MIN].groupby("number of versions").count()) 
+    PDS_frame = PDS_frame[PDS_frame[option + " time"] != TIMEOUT_MIN]
 
     total_mean_frame = pd.DataFrame()
     total_std_frame = pd.DataFrame()
@@ -117,50 +117,55 @@ def plot_cds(file : str):
     depth_frame = pd.DataFrame()
 
     for suffix in ["_mean", "_std", "_min", "_max"]:
-        for column in ["cADS time", "cPDS time"]:
+        for column in ["cADS time", option + " time"]:
             time_frame.insert(0,column + suffix,big_frame[column+suffix])
-        for column in ["cADS nodes size", "cPDS nodes size"]:
+        for column in ["cADS nodes size", option + " nodes size"]:
             nodes_frame.insert(0,column + suffix,big_frame[column+suffix])
-        for column in ["cADS edges size", "cPDS edges size"]:
+        for column in ["cADS edges size", option + " edges size"]:
             edges_frame.insert(0,column + suffix,big_frame[column+suffix])
-        for column in ["cADS reset", "cPDS reset"]:
+        for column in ["cADS reset", option + " reset"]:
             reset_frame.insert(0,column + suffix,big_frame[column+suffix])
-        for column in ["cADS depth", "cPDS depth"]:
+        for column in ["cADS depth", option + " depth"]:
             depth_frame.insert(0,column + suffix,big_frame[column+suffix])
     
     
-    display(time_frame)
-    display(nodes_frame)
-    display(edges_frame)
-    display(reset_frame)
-    display(depth_frame)
+    print(time_frame.style.to_latex())
+    print(nodes_frame.style.to_latex())
+    print(edges_frame.style.to_latex())
+    print(reset_frame.style.to_latex())
+    print(depth_frame.style.to_latex())
 
     fig, axs = plt.subplots(1,2)
-    max_val = ceil(max(dataframe[["number of versions", "cADS time", "cPDS time"]].replace(1200,0)["cPDS time"].to_list()))*1.05
+
     fig.set_size_inches(10,12)
     ADS_frame[["number of versions", "cADS time"]].boxplot(by="number of versions",ax=axs[0])
-    PDS_frame[["number of versions", "cPDS time"]].boxplot(by="number of versions",ax=axs[1])
+    PDS_frame[["number of versions", option + " time"]].boxplot(by="number of versions",ax=axs[1])
 
     axs[0].set_title("cADS execution time")
-    axs[1].set_title("cPDS execution time")
+    axs[1].set_title(option + " execution time")
     for ax in axs:
-        ax.set_ylim((0,max_val))
         ax.set_ylabel("Calculation time (s)")
         ax.set_xlabel("Number of versions")
 
-    effect_size = calculate_effect_size(dataframe, "cPDS time", "cADS time")
-    display(effect_size)
-    # for column in ["number of versions", "cADS time", "cADS nodes size", "cADS edges size", "cADS reset",  "cADS depth", "cPDS time", "cPDS nodes size",  "cPDS edges size", "cPDS reset",  "cPDS depth"]:
-    #     pass
+    effect_size = calculate_effect_size(dataframe, "cADS time", option + " time")
+    print(effect_size.style.to_latex())
+    if option == "cPDS":
+        plt.savefig('cds-plot.pdf')
+    else:
+        plt.savefig('family-plot.pdf')
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         file = sys.argv[1]
         index = file.find("cds")
         if index == -1:
-            plot_shulee(file, "asc")
-            plot_shulee(file,"desc")
+            index = file.find("family")
+            if index == -1:
+                plot_shulee(file, "asc")
+                plot_shulee(file,"desc")
+            else:
+                plot_cds(file, "OMS")
         else:
-            plot_cds(file)
+            plot_cds(file, "cPDS")
         plt.show()
       
