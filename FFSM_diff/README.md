@@ -2,12 +2,13 @@
 
 ## Folder structure
 - `algorithm` contains the Fsm_Diff/ Lts_Diff algorithm
-- `dot-files` contains some example dot-files which can be used in the algorithm
 
 ## Dependencies
 <ul>
 <li> <a href="https://pysmt.readthedocs.io/en/latest/"> pySMT </a> </li>
 <li> <a href="https://networkx.org/"> NetworkX </a> </li>
+<li> <a href="https://scipy.org/"> scipy </a> </li>
+<li> scikit-umfpack </li>
 </ul>
 
 ## NetworkX
