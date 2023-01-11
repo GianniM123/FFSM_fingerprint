@@ -1,4 +1,4 @@
-# Research Internship
+# FFSM_diff
 
 ## Folder structure
 - `algorithm` contains the Fsm_Diff/ Lts_Diff algorithm
