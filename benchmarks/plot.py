@@ -135,24 +135,30 @@ def plot_cds(file : str, option : str):
     print(reset_frame.style.to_latex())
     print(depth_frame.style.to_latex())
 
-    fig, axs = plt.subplots(1,2)
 
-    fig.set_size_inches(10,12)
-    ADS_frame[["number of versions", "cADS time"]].boxplot(by="number of versions",ax=axs[0])
-    PDS_frame[["number of versions", option + " time"]].boxplot(by="number of versions",ax=axs[1])
+    for plot_option in ["time", "edges size", "reset", "depth"]:
+        fig, axs = plt.subplots(1,2)
 
-    axs[0].set_title("cADS execution time")
-    axs[1].set_title(option + " execution time")
-    for ax in axs:
-        ax.set_ylabel("Calculation time (s)")
-        ax.set_xlabel("Number of versions")
+        fig.set_size_inches(10,12)
+        ADS_frame[["number of versions", "cADS " + plot_option]].boxplot(by="number of versions",ax=axs[0])
+        PDS_frame[["number of versions", option + " " + plot_option]].boxplot(by="number of versions",ax=axs[1])
 
-    effect_size = calculate_effect_size(dataframe, "cADS time", option + " time")
-    print(effect_size.style.to_latex())
-    if option == "cPDS":
-        plt.savefig('cds-plot.pdf')
-    else:
-        plt.savefig('family-plot.pdf')
+        title_name = {"time" : "execution time", "edges size"  : "number of inputs", "reset" : "number of resets", "depth" : "depth of tree"}
+        y_name = {"time" : "Calculation time (s)", "edges size"  : "Number of inputs", "reset" : "Number of resets", "depth" : "Depth of tree"}
+        axs[0].set_title("cADS " + title_name[plot_option])
+        axs[1].set_title(option + " " + title_name[plot_option])
+        for ax in axs:
+            if plot_option == "time":
+                ax.set_yscale("log")
+            ax.set_ylabel(y_name[plot_option])
+            ax.set_xlabel("Number of versions")
+
+        effect_size = calculate_effect_size(dataframe, "cADS time", option + " "+  plot_option)
+        print(effect_size.style.to_latex())
+        if option == "cPDS":
+            plt.savefig('cds/cds-plot-'+ plot_option +'.pdf')
+        else:
+            plt.savefig('family/family-plot-'+ plot_option +'.pdf')
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
