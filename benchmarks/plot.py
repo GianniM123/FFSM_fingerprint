@@ -78,10 +78,10 @@ def plot_shulee(file : str, option : str):
 
 def plot_cds(file : str, option : str):
     dataframe = pd.read_csv(file)
-    ADS_frame = dataframe[["number of versions", "cADS time", "cADS nodes size", "cADS edges size", "cADS reset", "cADS depth"]]
+    ADS_frame = dataframe[["number of versions", "cADS time", "cADS mean input", "cADS mean reset", "cADS depth", "cADS max reset"]]
     ADS_frame = ADS_frame[ADS_frame["cADS time"] != TIMEOUT_MIN]
 
-    PDS_frame = dataframe[["number of versions", option + " time", option + " nodes size", option + " edges size", option + " reset", option + " depth"]]
+    PDS_frame = dataframe[["number of versions", option + " time", option + " mean input", option + " mean reset", option + " depth", option + " max reset",]]
     print(PDS_frame[PDS_frame[option + " time"] == TIMEOUT_MIN].groupby("number of versions").count()) 
     PDS_frame = PDS_frame[PDS_frame[option + " time"] != TIMEOUT_MIN]
 
@@ -111,40 +111,37 @@ def plot_cds(file : str, option : str):
     big_frame = pd.concat([total_mean_frame, total_std_frame, total_min_frame, total_max_frame],axis=1)
 
     time_frame = pd.DataFrame()
-    nodes_frame = pd.DataFrame()
     edges_frame = pd.DataFrame()
     reset_frame = pd.DataFrame()
     depth_frame = pd.DataFrame()
+    max_reset_frame = pd.DataFrame()
 
-    for suffix in ["_mean", "_std", "_min", "_max"]:
-        for column in ["cADS time", option + " time"]:
-            time_frame.insert(0,column + suffix,big_frame[column+suffix])
-        for column in ["cADS nodes size", option + " nodes size"]:
-            nodes_frame.insert(0,column + suffix,big_frame[column+suffix])
-        for column in ["cADS edges size", option + " edges size"]:
-            edges_frame.insert(0,column + suffix,big_frame[column+suffix])
-        for column in ["cADS reset", option + " reset"]:
-            reset_frame.insert(0,column + suffix,big_frame[column+suffix])
-        for column in ["cADS depth", option + " depth"]:
-            depth_frame.insert(0,column + suffix,big_frame[column+suffix])
+
+    for column in ["cADS", option]:
+        for suffix in reversed(["_mean","_std", "_min","_max"]):
+            time_frame.insert(0,column + " time" +  suffix,big_frame[column + " time" + suffix])
+            edges_frame.insert(0,column + " mean input" + suffix,big_frame[column + " mean input" + suffix])
+            reset_frame.insert(0,column + " mean reset" + suffix,big_frame[column + " mean reset" + suffix])
+            depth_frame.insert(0,column + " depth" + suffix,big_frame[column + " depth" + suffix])
+            max_reset_frame.insert(0,column + " max reset" + suffix,big_frame[column + " max reset" + suffix])
     
     
     print(time_frame.style.to_latex())
-    print(nodes_frame.style.to_latex())
     print(edges_frame.style.to_latex())
     print(reset_frame.style.to_latex())
     print(depth_frame.style.to_latex())
+    print(max_reset_frame.style.to_latex())
 
 
-    for plot_option in ["time", "edges size", "reset", "depth"]:
-        fig, axs = plt.subplots(1,2)
+    for plot_option in ["time", "mean input", "mean reset", "depth", "max reset"]:
+        fig, axs = plt.subplots(2,1)
 
-        fig.set_size_inches(10,12)
+        fig.set_size_inches(8,10)
         ADS_frame[["number of versions", "cADS " + plot_option]].boxplot(by="number of versions",ax=axs[0])
         PDS_frame[["number of versions", option + " " + plot_option]].boxplot(by="number of versions",ax=axs[1])
 
-        title_name = {"time" : "execution time", "edges size"  : "number of inputs", "reset" : "number of resets", "depth" : "depth of tree"}
-        y_name = {"time" : "Calculation time (s)", "edges size"  : "Number of inputs", "reset" : "Number of resets", "depth" : "Depth of tree"}
+        title_name = {"time" : "execution time", "mean input"  : "Average number of inputs", "mean reset" : "Average number of resets", "depth" : "Maximal length of sequence", "max reset" : "Maximal number of resets"}
+        y_name = {"time" : "Calculation time (s)", "mean input"  : "Avg. nr of inputs", "mean reset" : "Avg. nr of resets", "depth" : "Max. length of sequence", "max reset" : "Max. nr of resets"}
         axs[0].set_title("cADS " + title_name[plot_option])
         axs[1].set_title(option + " " + title_name[plot_option])
         for ax in axs:

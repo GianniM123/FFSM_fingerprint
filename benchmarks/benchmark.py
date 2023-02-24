@@ -6,9 +6,9 @@ import shlex
 import sys
 import networkx as nx
 
-FAMILY = "python3 ../family-fingerprinter/main.py --FFSM={ffsm} --active={fsm} --{option}"
+FAMILY = "python3 ../family-based_fingerprinter/main.py --FFSM={ffsm} --active={fsm} --{option}"
 
-PRODUCTS = "python3 ../product-fingerprinter/main.py --folder={folder} --sut={fsm}"
+PRODUCTS = "python3 ../product-based_fingerprinter/main.py --folder={folder} --sut={fsm}"
 
 
 
@@ -58,18 +58,26 @@ def run_shulee_benchmark(option : str):
 
 def extract_info_from_graph(file : str):
     graph : nx.MultiDiGraph = nx.drawing.nx_agraph.read_dot(file)
-    return_dict = {"edges size" : len(graph.edges), "nodes size" : len(graph.nodes), "reset" : 0, "depth" : 0}
+    return_dict = {"mean input" : 0,  "mean reset" : 0, "depth" : 0, "max reset" : 0}
     for node in graph.nodes.data():
-        if node[1]["label"] == "RESET-SYS":
-            return_dict["reset"] = return_dict["reset"] + 1
-        elif graph.out_degree(node[0]) == 0:
-            distance = nx.shortest_path_length(graph,"a0", node[0])
-            if return_dict["depth"] < distance:
-                return_dict["depth"] = distance
+        if graph.out_degree(node[0]) == 0:
+            path = nx.shortest_path(graph,"a0", node[0])
+            depth = len(path) - 1
+            return_dict["mean input"] = return_dict["mean input"] + depth
+            if return_dict["depth"] < depth:
+                return_dict["depth"] = depth
+            nr_of_resets = 0
+            for node in path:
+                if graph.nodes[node]["label"] == "RESET-SYS":
+                    nr_of_resets = nr_of_resets + 1
+                    return_dict["mean reset"] = return_dict["mean reset"] + 1
+            if return_dict["max reset"] < nr_of_resets:
+                    return_dict["max reset"] = nr_of_resets
+            
     return return_dict
 
 def run_cds_benchmark(option : str):
-    time_dict = {"number of versions" : [], "cADS time" : [], "cADS nodes size" : [], "cADS edges size" : [],"cADS reset" : [],  "cADS depth" : [], "cPDS time" : [], "cPDS nodes size" : [],  "cPDS edges size" : [], "cPDS reset" : [],  "cPDS depth" : [], }
+    time_dict = {"number of versions" : [], "cADS time" : [], "cADS mean input" : [],"cADS mean reset" : [],  "cADS depth" : [], "cADS max reset" : [],"cPDS time" : [], "cPDS mean input" : [], "cPDS mean reset" : [],  "cPDS depth" : [],"cPDS max reset" : [], }
     for i in range(2,17):
         print("at nr: ", i)
         for _ in range(0,10):
@@ -81,37 +89,37 @@ def run_cds_benchmark(option : str):
             if time_ads != TIMEOUT_MIN:
                 info_dict = extract_info_from_graph('CDS.dot')
                 time_dict["cADS time"].append(time_ads)
-                time_dict["cADS nodes size"].append(info_dict["nodes size"])
-                time_dict["cADS edges size"].append(info_dict["edges size"])
-                time_dict["cADS reset"].append(info_dict["reset"])
+                time_dict["cADS mean input"].append(info_dict["mean input"]/i)
+                time_dict["cADS mean reset"].append(info_dict["mean reset"]/i)
+                time_dict["cADS max reset"].append(info_dict["max reset"])
                 time_dict["cADS depth"].append(info_dict["depth"])
             else:
                 time_dict["cADS time"].append(TIMEOUT_MIN)
-                time_dict["cADS nodes size"].append(0)
-                time_dict["cADS edges size"].append(0)
-                time_dict["cADS reset"].append(0)
+                time_dict["cADS mean input"].append(0)
+                time_dict["cADS mean reset"].append(0)
+                time_dict["cADS max reset"].append(0)
                 time_dict["cADS depth"].append(0)
 
             time_pds = run_family_fingerprinter(ffsm,fsm,"preset")
             if time_pds != TIMEOUT_MIN:
                 info_dict = extract_info_from_graph('CDS.dot')
                 time_dict["cPDS time"].append(time_pds)
-                time_dict["cPDS nodes size"].append(info_dict["nodes size"])
-                time_dict["cPDS edges size"].append(info_dict["edges size"])
-                time_dict["cPDS reset"].append(info_dict["reset"])
+                time_dict["cPDS mean input"].append(info_dict["mean input"]/i)
+                time_dict["cPDS mean reset"].append(info_dict["mean reset"]/i)
+                time_dict["cPDS max reset"].append(info_dict["max reset"])
                 time_dict["cPDS depth"].append(info_dict["depth"])
             else:
                 time_dict["cPDS time"].append(TIMEOUT_MIN)
-                time_dict["cPDS nodes size"].append(0)
-                time_dict["cPDS edges size"].append(0)
-                time_dict["cPDS reset"].append(0)
+                time_dict["cPDS mean input"].append(0)
+                time_dict["cPDS mean reset"].append(0)
+                time_dict["cPDS max reset"].append(0)
                 time_dict["cPDS depth"].append(0)
 
     df = pd.DataFrame.from_dict(time_dict) 
     df.to_csv ('benchmark_cds_' + option  + '.csv', index = False, header=True)
 
 def run_family_benchmark(option : str):
-    time_dict = {"number of versions" : [], "cADS time" : [], "cADS nodes size" : [], "cADS edges size" : [],"cADS reset" : [],  "cADS depth" : [], "OMS time" : [], "OMS nodes size" : [],  "OMS edges size" : [], "OMS reset" : [],  "OMS depth" : [], }
+    time_dict = {"number of versions" : [], "cADS time" : [], "cADS mean input" : [],"cADS mean reset" : [],  "cADS depth" : [], "cADS max reset" : [], "OMS time" : [],  "OMS mean input" : [], "OMS mean reset" : [],  "OMS depth" : [], "OMS max reset" : [], }
     for i in range(2,17):
         print("at nr: ", i)
         for _ in range(0,50):
@@ -123,23 +131,24 @@ def run_family_benchmark(option : str):
             if time_ads != TIMEOUT_MIN:
                 info_dict = extract_info_from_graph('CDS.dot')
                 time_dict["cADS time"].append(time_ads)
-                time_dict["cADS nodes size"].append(info_dict["nodes size"])
-                time_dict["cADS edges size"].append(info_dict["edges size"])
-                time_dict["cADS reset"].append(info_dict["reset"])
+                time_dict["cADS mean input"].append(info_dict["mean input"]/i)
+                time_dict["cADS mean reset"].append(info_dict["mean reset"]/i)
+                time_dict["cADS max reset"].append(info_dict["max reset"])
                 time_dict["cADS depth"].append(info_dict["depth"])
             else:
                 time_dict["cADS time"].append(TIMEOUT_MIN)
                 time_dict["cADS nodes size"].append(0)
-                time_dict["cADS edges size"].append(0)
-                time_dict["cADS reset"].append(0)
+                time_dict["cADS mean input"].append(0)
+                time_dict["cADS mean reset"].append(0)
+                time_dict["cADS max reset"].append(0)
                 time_dict["cADS depth"].append(0)
 
             time_oms = run_family_fingerprinter(ffsm,fsm,"shulee")
             info_dict = extract_info_from_graph('CDS.dot')
             time_dict["OMS time"].append(time_oms)
-            time_dict["OMS nodes size"].append(info_dict["nodes size"])
-            time_dict["OMS edges size"].append(info_dict["edges size"])
-            time_dict["OMS reset"].append(info_dict["reset"])
+            time_dict["OMS mean input"].append(info_dict["mean input"]/i)
+            time_dict["OMS mean reset"].append(info_dict["mean reset"]/i)
+            time_dict["OMS max reset"].append(info_dict["max reset"])
             time_dict["OMS depth"].append(info_dict["depth"])
 
     df = pd.DataFrame.from_dict(time_dict) 
