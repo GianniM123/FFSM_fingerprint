@@ -1,6 +1,6 @@
 import getopt
 import sys
-import time
+import timeit
 from aalpy.SULs.AutomataSUL import MealySUL
 from aalpy.utils.FileHandler import load_automaton_from_file
 from aalpy.automata import MealyMachine
@@ -77,17 +77,17 @@ def main():
 
             begin_time = None 
             if mode == 0:
-                begin_time = time.time()
+                begin_time = timeit.default_timer()
                 ds = CADS(ffsm=ffsm)
             elif mode == 1:
-                begin_time = time.time()
+                begin_time = timeit.default_timer()
                 ds = CPDS(ffsm=ffsm)
             elif mode == 2:
-                begin_time = time.time()
+                begin_time = timeit.default_timer()
                 ds = ShuLeeReset(ffsm=ffsm)
-            end_time = time.time()
+            end_time = timeit.default_timer()
             diff_time = (end_time - begin_time)
-            print("calculation costs: ", diff_time, " seconds")
+            print("calculation costs:", diff_time, " seconds")
             if ds.exists:
                 nx.drawing.nx_agraph.write_dot(ds.seperating_sequence,"CDS.dot")
             else:
