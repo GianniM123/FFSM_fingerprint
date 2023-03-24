@@ -34,7 +34,7 @@ def VD_A(treatment : list, control : list):
 
 def calculate_effect_size(dataframe : pd.DataFrame, family_option : str, product_option :str):
     max_val = max(dataframe["number of versions"].to_list())
-    new_frame = {"number of versions" : [], "effect size" : [], "magnitude" : []}
+    new_frame = {"number of versions" : [], "effect size" : [], "magnitude" : [], "p-value" : []}
     for i in range(2,max_val+1):
         frame = dataframe[dataframe["number of versions"] == i]
         new_frame["number of versions"].append(i)
@@ -42,8 +42,10 @@ def calculate_effect_size(dataframe : pd.DataFrame, family_option : str, product
         product = frame[product_option]
         family = frame[family_option]
         estimate, magnitude = VD_A(family.to_list(), product.to_list())
+        _, p_value = stats.mannwhitneyu(family, product)
         new_frame["effect size"].append(estimate)
         new_frame["magnitude"].append(magnitude)
+        new_frame["p-value"].append(p_value)
     return pd.DataFrame.from_dict(new_frame)
 
 
