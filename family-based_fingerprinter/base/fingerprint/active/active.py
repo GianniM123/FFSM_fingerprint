@@ -1,3 +1,4 @@
+from time import sleep
 from aalpy.SULs.AutomataSUL import MealySUL
 from base.fingerprint.active.ConfigurationDistinguishingSequence import ConfigurationDistinguishingSequence
 from base.FFSM.FFSM import RESET_IN, RESET_OUT
@@ -19,6 +20,7 @@ class Simulator:
                 output = None
                 if input == RESET_IN:
                     sul.pre()
+                    sleep(0.2)
                     output = RESET_OUT
                 else:
                     output = sul.step(input)

@@ -80,8 +80,8 @@ def plot_shulee(file : str, option : str):
 
 def plot_cds(file : str, option : str):
     dataframe = pd.read_csv(file)
-    ADS_frame = dataframe[["number of versions", "cADS time", "cADS mean input", "cADS mean reset", "cADS depth", "cADS max reset"]]
-    ADS_frame = ADS_frame[ADS_frame["cADS time"] != TIMEOUT_MIN]
+    ADS_frame = dataframe[["number of versions", "CADS time", "CADS mean input", "CADS mean reset", "CADS depth", "CADS max reset"]]
+    ADS_frame = ADS_frame[ADS_frame["CADS time"] != TIMEOUT_MIN]
 
     PDS_frame = dataframe[["number of versions", option + " time", option + " mean input", option + " mean reset", option + " depth", option + " max reset",]]
     print(PDS_frame[PDS_frame[option + " time"] == TIMEOUT_MIN].groupby("number of versions").count()) 
@@ -119,7 +119,7 @@ def plot_cds(file : str, option : str):
     max_reset_frame = pd.DataFrame()
 
 
-    for column in ["cADS", option]:
+    for column in ["CADS", option]:
         for suffix in reversed(["_mean","_std", "_min","_max"]):
             time_frame.insert(0,column + " time" +  suffix,big_frame[column + " time" + suffix])
             edges_frame.insert(0,column + " mean input" + suffix,big_frame[column + " mean input" + suffix])
@@ -139,12 +139,12 @@ def plot_cds(file : str, option : str):
         fig, axs = plt.subplots(2,1)
 
         fig.set_size_inches(8,10)
-        ADS_frame[["number of versions", "cADS " + plot_option]].boxplot(by="number of versions",ax=axs[0])
+        ADS_frame[["number of versions", "CADS " + plot_option]].boxplot(by="number of versions",ax=axs[0])
         PDS_frame[["number of versions", option + " " + plot_option]].boxplot(by="number of versions",ax=axs[1])
 
         title_name = {"time" : "execution time", "mean input"  : "Average number of inputs", "mean reset" : "Average number of resets", "depth" : "Maximal length of sequence", "max reset" : "Maximal number of resets"}
         y_name = {"time" : "Calculation time (s)", "mean input"  : "Avg. nr of inputs", "mean reset" : "Avg. nr of resets", "depth" : "Max. length of sequence", "max reset" : "Max. nr of resets"}
-        axs[0].set_title("cADS " + title_name[plot_option])
+        axs[0].set_title("CADS " + title_name[plot_option])
         axs[1].set_title(option + " " + title_name[plot_option])
         for ax in axs:
             if plot_option == "time":
@@ -152,9 +152,9 @@ def plot_cds(file : str, option : str):
             ax.set_ylabel(y_name[plot_option])
             ax.set_xlabel("Number of versions")
 
-        effect_size = calculate_effect_size(dataframe, "cADS time", option + " "+  plot_option)
+        effect_size = calculate_effect_size(dataframe, "CADS time", option + " "+  plot_option)
         print(effect_size.style.to_latex())
-        if option == "cPDS":
+        if option == "CPDS":
             plt.savefig('cds/cds-plot-'+ plot_option +'.pdf')
         else:
             plt.savefig('family/family-plot-'+ plot_option +'.pdf')
@@ -171,6 +171,6 @@ if __name__ == "__main__":
             else:
                 plot_cds(file, "OMS")
         else:
-            plot_cds(file, "cPDS")
+            plot_cds(file, "CPDS")
         plt.show()
       
