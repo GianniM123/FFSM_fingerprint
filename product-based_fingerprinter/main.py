@@ -43,7 +43,7 @@ def main():
         distinguish_graph = calculate_fingerpint_sequences(names)
         end_time = timeit.default_timer()
         diff_time = end_time - begin_time
-        print("calculation costs: ", diff_time, " seconds")
+        print("calculation costs:", diff_time, " seconds")
 
         nx.drawing.nx_agraph.write_dot(distinguish_graph,"sequence.dot")
 
